@@ -1,0 +1,5 @@
+{
+  "name": "goldman-els-server",
+  "version": "1.0.0",
+  "description": "Node.js/Express backend for the Mutual Fund Calculator"
+}
