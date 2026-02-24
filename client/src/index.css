@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  --color-gs-navy: #1A3B5C;
+  --color-gs-navy-dark: #0F2840;
+  --color-gs-navy-light: #2A5580;
+  --color-gs-blue: #4A90D9;
+  --color-gs-gold: #B89D5A;
+  --color-gs-gold-light: #D4BA7A;
+  --color-gs-bg: #F7F7F5;
+  --color-gs-light-gray: #EDEDEB;
+  --color-gs-medium-gray: #B0ADA5;
+  --color-gs-dark-gray: #5A5A5A;
+  --color-gs-text: #2C2C2C;
+  --color-gs-white: #FFFFFF;
+  --color-gs-border: #D9D5CC;
+  --color-gs-success: #2E7D32;
+  --color-gs-success-light: #E8F5E9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: var(--color-gs-text);
+  background-color: var(--color-gs-bg);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  color: var(--color-gs-navy);
+  font-weight: 400;
+}
+
+input, select, button {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 15px;
+}
+
+/* Range slider styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--color-gs-light-gray);
+  border-radius: 2px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-gs-navy);
+  cursor: pointer;
+  border: 3px solid var(--color-gs-white);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
