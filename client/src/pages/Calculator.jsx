@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FundSelector from "../components/FundSelector";
 import InvestmentForm from "../components/InvestmentForm";
 import ResultsDisplay from "../components/ResultsDisplay";
@@ -9,8 +9,16 @@ export default function Calculator() {
   const [investment, setInvestment] = useState("");
   const [duration, setDuration] = useState("5");
   const [result, setResult] = useState(null);
+  const [funds, setFunds] = useState([]);
 
   const canCalculate = ticker && investment && duration;
+
+  useEffect(() => {
+    fetch("/api/funds")
+      .then((r) => r.json())
+      .then(setFunds)
+      .catch((err) => console.error("failed to load funds", err));
+  }, []);
 
   const handleCalculate = () => {
     // TODO: Replace with real API call to /future-value
@@ -30,7 +38,7 @@ export default function Calculator() {
 
       {/* Calculator card */}
       <div className="bg-gs-white rounded-xl border border-gs-border p-8 shadow-sm">
-        <FundSelector selected={ticker} onSelect={setTicker} />
+        <FundSelector selected={ticker} onSelect={setTicker} funds={funds} />
         <InvestmentForm
           investment={investment}
           duration={duration}

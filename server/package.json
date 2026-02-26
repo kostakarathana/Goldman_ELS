@@ -1,5 +1,17 @@
 {
   "name": "goldman-els-server",
   "version": "1.0.0",
-  "description": "Node.js/Express backend for the Mutual Fund Calculator"
+  "description": "Node.js/Express backend for the Mutual Fund Calculator",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "test": "jest --runInBand"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "jest": "^29.6.1",
+    "supertest": "^6.3.3"
+  }
 }

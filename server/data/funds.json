@@ -1,3 +1,29 @@
 {
-  "_comment": "Hardcoded list of mutual funds and ETFs with their tickers, names, and types. Verify each ticker against Newton Analytics before finalizing."
+  "top_25_mutual_funds": [
+    { "rank": 1, "symbol": "VSMPX", "fund_name": "Vanguard Total Stock Market Index Fund;Institutional Plus" },
+    { "rank": 2, "symbol": "FXAIX", "fund_name": "Fidelity 500 Index Fund" },
+    { "rank": 3, "symbol": "VFIAX", "fund_name": "Vanguard 500 Index Fund;Admiral" },
+    { "rank": 4, "symbol": "VTSAX", "fund_name": "Vanguard Total Stock Market Index Fund;Admiral" },
+    { "rank": 5, "symbol": "SPAXX", "fund_name": "Fidelity Government Money Market Fund" },
+    { "rank": 6, "symbol": "VMFXX", "fund_name": "Vanguard Federal Money Market Fund;Investor" },
+    { "rank": 7, "symbol": "VGTSX", "fund_name": "Vanguard Total International Stock Index Fund;Investor" },
+    { "rank": 8, "symbol": "SWVXX", "fund_name": "Schwab Prime Advantage Money Fund;Inv" },
+    { "rank": 9, "symbol": "FDRXX", "fund_name": "Fidelity Government Cash Reserves" },
+    { "rank": 10, "symbol": "FGTXX", "fund_name": "Goldman Sachs FS Government Fund;Institutional" },
+    { "rank": 11, "symbol": "OGVXX", "fund_name": "JPMorgan US Government Money Market Fund;Capital" },
+    { "rank": 12, "symbol": "FCTDX", "fund_name": "Fidelity Strategic Advisers Fidelity US Total Stk" },
+    { "rank": 13, "symbol": "VIIIX", "fund_name": "Vanguard Institutional Index Fund;Inst Plus" },
+    { "rank": 14, "symbol": "FRGXX", "fund_name": "Fidelity Instl Government Portfolio;Institutional" },
+    { "rank": 15, "symbol": "VTBNX", "fund_name": "Vanguard Total Bond Market II Index Fund;Institutional" },
+    { "rank": 16, "symbol": "MVRXX", "fund_name": "Morgan Stanley Inst Liq Government Port;Institutional" },
+    { "rank": 17, "symbol": "TFDXX", "fund_name": "BlackRock Liquidity FedFund;Institutional" },
+    { "rank": 18, "symbol": "GVMXX", "fund_name": "State Street US Government Money Market Fund;Prem" },
+    { "rank": 19, "symbol": "AGTHX", "fund_name": "American Funds Growth Fund of America;A" },
+    { "rank": 20, "symbol": "VTBIX", "fund_name": "Vanguard Total Bond Market II Index Fund;Investor" },
+    { "rank": 21, "symbol": "CJTTX", "fund_name": "JPMorgan 100% US Treasury Securities Money Market Fund;Capital" },
+    { "rank": 22, "symbol": "TTTXX", "fund_name": "BlackRock Liquidity Treasury Trust Fund;Institutional" },
+    { "rank": 23, "symbol": "FCNTX", "fund_name": "Fidelity Contrafund" },
+    { "rank": 24, "symbol": "SNAXX", "fund_name": "Schwab Prime Advantage Money Fund;Ultra" },
+    { "rank": 25, "symbol": "PIMIX", "fund_name": "PIMCO Income Fund;Institutional" }
+  ]
 }
