@@ -18,7 +18,7 @@ export default function Calculator() {
   };
 
   return (
-    <main className="max-w-6xl mx-auto px-8 py-10">
+    <main className="max-w-7xl mx-auto px-8 py-10">
       {/* Hero section */}
       <div className="text-center mb-10">
         <h1 className="text-3xl mb-3">Mutual Fund Investment Calculator</h1>
@@ -30,8 +30,8 @@ export default function Calculator() {
       </div>
 
       <div className="flex gap-10 items-start">
-        {/* Calculator card — self-start prevents it stretching to match results height */}
-        <div className="self-start bg-gs-white rounded-xl border border-gs-border p-8 shadow-sm shrink-0 w-96">
+        {/* Calculator card */}
+        <div className="self-start bg-gs-white rounded-xl border border-gs-border p-8 shadow-sm shrink-0 w-5/12">
           <FundSelector selected={ticker} onSelect={setTicker} />
           <InvestmentForm
             investment={investment}
