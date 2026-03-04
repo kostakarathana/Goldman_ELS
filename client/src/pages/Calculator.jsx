@@ -1,7 +1,7 @@
 import { useState } from "react";
 import FundSelector from "../components/FundSelector";
 import InvestmentForm from "../components/InvestmentForm";
-import ResultsDisplay from "../components/ResultsDisplay";
+import ResultsDisplay from "../components/ResultsDisplay/ResultsDisplay";
 import { MOCK_RESULT } from "../data/mockData";
 
 export default function Calculator() {
@@ -23,8 +23,9 @@ export default function Calculator() {
       <div className="text-center mb-10">
         <h1 className="text-3xl mb-3">Mutual Fund Investment Calculator</h1>
         <p className="text-base text-gs-dark-gray max-w-xl mx-auto leading-relaxed">
-          See how much your investment could grow over time using the Capital Asset Pricing Model.
-          Select a mutual fund, enter your investment details, and calculate.
+          See how much your investment could grow over time using the Capital
+          Asset Pricing Model. Select a mutual fund, enter your investment
+          details, and calculate.
         </p>
       </div>
 
@@ -52,7 +53,12 @@ export default function Calculator() {
       </div>
 
       {/* Results */}
-      <ResultsDisplay result={result} ticker={ticker} investment={investment} duration={duration} />
+      <ResultsDisplay
+        result={result}
+        ticker={ticker}
+        investment={investment}
+        duration={duration}
+      />
     </main>
   );
 }
