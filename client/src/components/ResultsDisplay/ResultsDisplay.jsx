@@ -80,27 +80,6 @@ export default function ResultsDisplay({
           variants={fadeUp}
           style={{ textAlign: "center", marginBottom: "32px" }}
         >
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={springPop}
-            style={{
-              display: "inline-block",
-              fontSize: "10px",
-              fontFamily: "Arial, sans-serif",
-              fontWeight: 700,
-              letterSpacing: "3px",
-              textTransform: "uppercase",
-              color: "#8a6d2f",
-              background: "#fdf6e3",
-              border: "1px solid #e8d89a",
-              borderRadius: "20px",
-              padding: "4px 16px",
-              marginBottom: "14px",
-            }}
-          >
-            Investment Projection
-          </motion.div>
           <h2
             style={{
               fontSize: "28px",
@@ -145,29 +124,6 @@ export default function ResultsDisplay({
             overflow: "hidden",
           }}
         >
-          {/* Decorative rings */}
-          {[
-            { size: 180, offset: -50, delay: 0.2 },
-            { size: 100, offset: -15, delay: 0.35 },
-          ].map(({ size, offset, delay }, i) => (
-            <motion.div
-              key={i}
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ ...slowEaseOut, delay }}
-              style={{
-                position: "absolute",
-                top: `${offset}px`,
-                right: `${offset}px`,
-                width: `${size}px`,
-                height: `${size}px`,
-                borderRadius: "50%",
-                border: "1px solid rgba(255,255,255,0.08)",
-                pointerEvents: "none",
-              }}
-            />
-          ))}
-
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -233,61 +189,6 @@ export default function ResultsDisplay({
             </span>
           </motion.div>
 
-          {/* Bar chart */}
-          <div style={{ marginBottom: "18px" }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                fontSize: "10px",
-                color: "rgba(255,255,255,0.35)",
-                fontFamily: "Arial, sans-serif",
-                marginTop: "6px",
-              }}
-            >
-              <span>Year 1</span>
-              <span>Year {duration}</span>
-            </div>
-          </div>
-
-          {/* Growth bar */}
-          <div
-            style={{
-              height: "8px",
-              borderRadius: "4px",
-              overflow: "hidden",
-              background: "rgba(255,255,255,0.1)",
-              display: "flex",
-            }}
-          >
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${principalBarPct}%` }}
-              transition={{
-                duration: 0.9,
-                delay: 0.7,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              style={{
-                background: "rgba(255,255,255,0.35)",
-                borderRadius: "4px 0 0 4px",
-              }}
-            />
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${gainBarPct}%` }}
-              transition={{
-                duration: 0.9,
-                delay: 1.0,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              style={{
-                background: "linear-gradient(90deg, #2d7a5f, #3dba8c)",
-                borderRadius: "0 4px 4px 0",
-              }}
-            />
-          </div>
-
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -343,7 +244,11 @@ export default function ResultsDisplay({
               <motion.div
                 key={label}
                 variants={fadeUp}
-                whileHover={{ y: -3, boxShadow: `0 10px 28px ${shadow}` }}
+                whileHover={{
+                  y: -3,
+                  boxShadow: `0 10px 28px ${shadow}`,
+                }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 style={{
                   background: bg,
                   border: `1px solid ${border}`,
@@ -386,6 +291,11 @@ export default function ResultsDisplay({
         {/* ── Calculation Details ── */}
         <motion.div
           variants={fadeUp}
+          whileHover={{
+            y: -3,
+            boxShadow: "0 10px 28px rgba(0,0,0,0.08)",
+          }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
           style={{
             background: "#ffffff",
             borderRadius: "16px",
@@ -415,6 +325,7 @@ export default function ResultsDisplay({
               Calculation Details
             </p>
           </div>
+
           <motion.div variants={containerVariants}>
             {details.map(({ label, value }, i) => (
               <motion.div
