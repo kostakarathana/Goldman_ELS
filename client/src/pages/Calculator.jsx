@@ -10,9 +10,15 @@ export default function Calculator() {
   const [duration, setDuration] = useState("5");
   const [result, setResult] = useState(null);
 
+  // snapshot of inputs at the moment calculate results button was last clicked
+  const [snapshot, setSnapshot] = useState(null);
+
   const canCalculate = ticker && investment && duration;
 
   const handleCalculate = () => {
+    // Freeze the current inputs so ResultsDisplay doesn't react to future edits unless button is pressed again
+    setSnapshot({ ticker, investment, duration });
+
     // TODO: Replace with real API call to /future-value
     setResult(MOCK_RESULT);
   };
@@ -52,13 +58,13 @@ export default function Calculator() {
           </button>
         </div>
 
-        {/* Results — grows to fill remaining space */}
+        {/* Results*/}
         <div className="flex-1 min-w-0">
           <ResultsDisplay
             result={result}
-            ticker={ticker}
-            investment={investment}
-            duration={duration}
+            ticker={snapshot?.ticker}
+            investment={snapshot?.investment}
+            duration={snapshot?.duration}
           />
         </div>
       </div>
