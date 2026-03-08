@@ -15,13 +15,21 @@ export default function ResultsDisplay({ result, ticker, investment, duration })
 
   const pct = (n) => (Number(n) * 100).toFixed(2) + "%";
 
+  const days = Number(duration);
+  const formatDuration = (d) => {
+    if (d < 30) return `${d} ${d === 1 ? "day" : "days"}`;
+    if (d < 365) return `${Math.round(d / 30)} ${Math.round(d / 30) === 1 ? "month" : "months"}`;
+    const yrs = (d / 365).toFixed(1);
+    return `${yrs} ${yrs === "1.0" ? "year" : "years"}`;
+  };
+
   return (
     <div className="mt-10">
       {/* Section title */}
       <div className="text-center mb-8">
         <h2 className="text-2xl mb-2">Your Investment Projection</h2>
         <p className="text-sm text-gs-dark-gray">
-          {fundName} ({ticker}) over {duration} {Number(duration) === 1 ? "year" : "years"}
+          {fundName} ({ticker}) over {formatDuration(days)}
         </p>
       </div>
 

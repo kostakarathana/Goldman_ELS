@@ -3,25 +3,23 @@
  * Express server entry point.
  * Configures middleware, mounts routes, and starts the HTTP server.
  */
+import "dotenv/config";
 import express from "express";
-import fs from "fs";
+import cors from "cors";
+import fundsRouter from "./routes/funds.js";
+import calculateRouter from "./routes/calculate.js";
+import portfolioRouter from "./routes/portfolio.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const fundsData = JSON.parse(
-  fs.readFileSync(new URL("./data/funds.json", import.meta.url))
-);
+app.use(cors());
+app.use(express.json());
 
-// simple API endpoint returning the array of funds
-app.get("/api/funds", (req, res) => {
-  // we return the array directly, client can map as needed
-  res.json(fundsData.top_25_mutual_funds);
-});
+app.use("/api/funds", fundsRouter);
+app.use("/api", calculateRouter);
+app.use("/api/portfolio", portfolioRouter);
 
-
-
-// start the server
 app.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
 });

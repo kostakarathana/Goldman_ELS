@@ -28,11 +28,8 @@ router.get("/future-value", async (req, res) => {
     const beta = await getBeta(ticker);
     const expectedReturn = await getExpectedReturn(ticker);
     const rate = computeRate(beta, expectedReturn, RISK_FREE_RATE);
-    const futureValue = computeFutureValue(
-      Number(investment),
-      rate,
-      Number(duration)
-    );
+    const years = Number(duration) / 365;
+    const futureValue = computeFutureValue(Number(investment), rate, years);
 
     res.json({ futureValue, rate, beta, expectedReturn, riskFreeRate: RISK_FREE_RATE });
   } catch (err) {
