@@ -1,10 +1,7 @@
-import { MOCK_FUNDS } from "../data/mockData";
-
 export default function ResultsDisplay({ result, ticker, investment, duration }) {
   if (!result) return null;
 
-  const fund = MOCK_FUNDS.find((f) => f.ticker === ticker);
-  const fundName = fund ? fund.fundName : ticker;
+  const fundName = result.fundName || ticker;
 
   const principal = Number(investment);
   const gain = result.futureValue - principal;

@@ -7,11 +7,16 @@
  */
 
 import express from "express";
+import fs from "fs";
 import { computeRate, computeFutureValue } from "../services/calculatorService.js";
 import { getBeta } from "../services/betaService.js";
 import { getExpectedReturn } from "../services/returnService.js";
 
 const router = express.Router();
+
+const fundsData = JSON.parse(
+  fs.readFileSync(new URL("../data/funds.json", import.meta.url))
+);
 
 // risk‑free rate used throughout (could be configurable)
 const RISK_FREE_RATE = 0.0425;
@@ -31,7 +36,12 @@ router.get("/future-value", async (req, res) => {
     const years = Number(duration) / 365;
     const futureValue = computeFutureValue(Number(investment), rate, years);
 
-    res.json({ futureValue, rate, beta, expectedReturn, riskFreeRate: RISK_FREE_RATE });
+    const fund = fundsData.top_25_mutual_funds.find(
+      (f) => f.symbol.toUpperCase() === ticker.toUpperCase()
+    );
+    const fundName = fund ? fund.fund_name : ticker;
+
+    res.json({ futureValue, rate, beta, expectedReturn, riskFreeRate: RISK_FREE_RATE, fundName });
   } catch (err) {
     console.error("/future-value error", err);
     res.status(500).json({ error: "calculation failed" });

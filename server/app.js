@@ -8,6 +8,7 @@ import express from "express";
 import cors from "cors";
 import fundsRouter from "./routes/funds.js";
 import calculateRouter from "./routes/calculate.js";
+import compareRouter from "./routes/compare.js";
 import portfolioRouter from "./routes/portfolio.js";
 
 const app = express();
@@ -18,8 +19,13 @@ app.use(express.json());
 
 app.use("/api/funds", fundsRouter);
 app.use("/api", calculateRouter);
+app.use("/api/compare", compareRouter);
 app.use("/api/portfolio", portfolioRouter);
 
-app.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`Server listening on http://localhost:${PORT}`);
+  });
+}
+
+export default app;
