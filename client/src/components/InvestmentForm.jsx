@@ -1,5 +1,12 @@
 export default function InvestmentForm({ investment, duration, onInvestmentChange, onDurationChange }) {
-  const years = Number(duration) || 1;
+  const days = Number(duration) || 1;
+
+  const formatDuration = (d) => {
+    if (d < 30) return `${d} ${d === 1 ? "Day" : "Days"}`;
+    if (d < 365) return `${Math.round(d / 30)} ${Math.round(d / 30) === 1 ? "Month" : "Months"}`;
+    const yrs = (d / 365).toFixed(1);
+    return `${yrs} ${yrs === "1.0" ? "Year" : "Years"}`;
+  };
 
   return (
     <div className="space-y-6 mb-6">
@@ -29,22 +36,22 @@ export default function InvestmentForm({ investment, duration, onInvestmentChang
             Investment Duration
           </label>
           <span className="text-lg font-semibold text-gs-navy">
-            {years} {years === 1 ? "Year" : "Years"}
+            {formatDuration(days)}
           </span>
         </div>
         <input
           type="range"
           min="1"
-          max="30"
-          value={years}
+          max="1825"
+          value={days}
           onChange={(e) => onDurationChange(e.target.value)}
           className="w-full cursor-pointer"
         />
         <div className="flex justify-between text-xs text-gs-medium-gray mt-1">
+          <span>1 Day</span>
           <span>1 Yr</span>
-          <span>10 Yr</span>
-          <span>20 Yr</span>
-          <span>30 Yr</span>
+          <span>2.5 Yr</span>
+          <span>5 Yr</span>
         </div>
       </div>
     </div>

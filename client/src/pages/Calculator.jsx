@@ -1,26 +1,34 @@
 import { useState } from "react";
 import FundSelector from "../components/FundSelector";
 import InvestmentForm from "../components/InvestmentForm";
-import ResultsDisplay from "../components/ResultsDisplay/ResultsDisplay";
-import { MOCK_RESULT } from "../data/mockData";
+import ResultsDisplay from "../components/ResultsDisplay";
+import { getFutureValue } from "../services/api";
 
 export default function Calculator() {
   const [ticker, setTicker] = useState("");
   const [investment, setInvestment] = useState("");
   const [duration, setDuration] = useState("5");
   const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // snapshot of inputs at the moment calculate results button was last clicked
   const [snapshot, setSnapshot] = useState(null);
 
   const canCalculate = ticker && investment && duration;
 
-  const handleCalculate = () => {
-    // Freeze the current inputs so ResultsDisplay doesn't react to future edits unless button is pressed again
+  const handleCalculate = async () => {
+    setLoading(true);
+    setError(null);
     setSnapshot({ ticker, investment, duration });
-
-    // TODO: Replace with real API call to /future-value
-    setResult(MOCK_RESULT);
+    try {
+      const data = await getFutureValue(ticker, investment, duration);
+      setResult(data);
+    } catch (err) {
+      setError("Calculation failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -45,20 +53,23 @@ export default function Calculator() {
             onInvestmentChange={setInvestment}
             onDurationChange={setDuration}
           />
+
+          {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+
           <button
-            disabled={!canCalculate}
+            disabled={!canCalculate || loading}
             onClick={handleCalculate}
             className={`w-full py-3 px-6 text-sm font-semibold tracking-wide rounded-lg transition-all ${
-              canCalculate
+              canCalculate && !loading
                 ? "bg-gs-navy text-gs-white hover:bg-gs-navy-dark cursor-pointer shadow-md hover:shadow-lg"
                 : "bg-gs-light-gray text-gs-medium-gray cursor-not-allowed"
             }`}
           >
-            Calculate Future Value
+            {loading ? "Calculating..." : "Calculate Future Value"}
           </button>
         </div>
 
-        {/* Results*/}
+        {/* Results */}
         <div className="flex-1 min-w-0">
           <ResultsDisplay
             result={result}
