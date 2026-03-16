@@ -1,0 +1,12 @@
+{
+  "buildCommand": "cd client && npm install && npx vite build",
+  "outputDirectory": "client/dist",
+  "framework": null,
+  "rewrites": [
+    { "source": "/api/funds", "destination": "/api/funds" },
+    { "source": "/api/future-value", "destination": "/api/future-value" },
+    { "source": "/api/compare", "destination": "/api/compare" },
+    { "source": "/api/portfolio", "destination": "/api/portfolio" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
