@@ -20,6 +20,7 @@ Frontend mockup with mock data, styled after Marcus by Goldman Sachs.
 - `client/src/App.jsx` — Renders Header → Calculator → Footer
 - `client/vite.config.js` — Added Tailwind plugin
 
+
 ### Removed
 - `client/src/App.css` — Vite boilerplate
 
