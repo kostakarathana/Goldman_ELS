@@ -3,7 +3,6 @@ import fs from "fs";
 import { computeRate, computeFutureValue } from "../services/calculatorService.js";
 import { getBeta } from "../services/betaService.js";
 import { getExpectedReturn } from "../services/returnService.js";
-import { getFundYield } from "../services/yieldService.js";
 
 const router = express.Router();
 
@@ -27,21 +26,11 @@ router.get("/future-value", async (req, res) => {
     const fundName = fund ? fund.fund_name : ticker;
 
     const beta = await getBeta(ticker);
-    let rate, expectedReturn, futureValue, method;
+    const expectedReturn = await getExpectedReturn(ticker);
+    const rate = computeRate(beta, expectedReturn, RISK_FREE_RATE);
+    const futureValue = computeFutureValue(Number(investment), rate, years);
 
-    if (beta !== null) {
-      expectedReturn = await getExpectedReturn(ticker);
-      rate = computeRate(beta, expectedReturn, RISK_FREE_RATE);
-      futureValue = computeFutureValue(Number(investment), rate, years);
-      method = "capm";
-    } else {
-      rate = await getFundYield(ticker);
-      futureValue = computeFutureValue(Number(investment), rate, years);
-      expectedReturn = rate;
-      method = "yield";
-    }
-
-    res.json({ futureValue, rate, beta, expectedReturn, riskFreeRate: RISK_FREE_RATE, fundName, method });
+    res.json({ futureValue, rate, beta, expectedReturn, riskFreeRate: RISK_FREE_RATE, fundName });
   } catch (err) {
     console.error("/future-value error", err);
     res.status(500).json({ error: "calculation failed" });

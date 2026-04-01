@@ -68,7 +68,7 @@ export default function ResultsDisplay({ result, ticker, investment, duration })
 
   const detailRows = [
     ["CAPM Rate (r)", pct(result.rate)],
-    ["Beta (β)", result.beta != null ? result.beta.toFixed(4) : "N/A (yield-based)"],
+    ["Beta (β)", result.beta != null ? result.beta.toFixed(4) : "0 (no market correlation)"],
     ["Expected Return", pct(result.expectedReturn)],
     ["Risk-Free Rate", pct(result.riskFreeRate)],
   ];
