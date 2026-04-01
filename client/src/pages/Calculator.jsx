@@ -1,7 +1,7 @@
 import { useState } from "react";
 import FundSelector from "../components/FundSelector";
 import InvestmentForm from "../components/InvestmentForm";
-import ResultsDisplay from "../components/ResultsDisplay";
+import ResultsDisplay from "../components/ResultsDisplay/ResultsDisplay";
 import { getFutureValue } from "../services/api";
 
 export default function Calculator() {
@@ -18,11 +18,13 @@ export default function Calculator() {
   const canCalculate = ticker && investment && duration;
 
   const handleCalculate = async () => {
+    const requestSnapshot = { ticker, investment, duration };
+
     setLoading(true);
     setError(null);
-    setSnapshot({ ticker, investment, duration });
     try {
       const data = await getFutureValue(ticker, investment, duration);
+      setSnapshot(requestSnapshot);
       setResult(data);
     } catch (err) {
       setError("Calculation failed. Please try again.");
