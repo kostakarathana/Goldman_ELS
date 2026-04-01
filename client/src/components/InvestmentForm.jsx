@@ -45,7 +45,7 @@ export default function InvestmentForm({ investment, onInvestmentChange, onDurat
 
         <div className="space-y-4">
           {[
-            { label: "Years", value: years, setValue: setYears, max: 5, marks: ["0","1","2","3","4","5"] },
+            { label: "Years", value: years, setValue: setYears, max: 30, marks: ["0","5","10","15","20","25","30"] },
             { label: "Months", value: months, setValue: setMonths, max: 11, marks: ["0","3","6","9","11"] },
             { label: "Days", value: days, setValue: setDays, max: 30, marks: ["0","10","20","30"] },
           ].map(({ label, value, setValue, max, marks }) => (
