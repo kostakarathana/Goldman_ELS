@@ -16,6 +16,7 @@
 import express from "express";
 import { getExpectedReturn } from "../services/returnService.js";
 import { getBeta } from "../services/betaService.js";
+import { getFundYield } from "../services/yieldService.js";
 import { computeRate, computeFutureValue } from "../services/calculatorService.js";
 
 const router = express.Router();
@@ -52,19 +53,30 @@ router.get("/", async (req, res) => {
     const results = await Promise.all(
       tickers.map(async (ticker) => {
         try {
-          const beta = await getBeta(ticker);                              //  betaService
-          const expectedReturn = await getExpectedReturn(ticker);          // returnService
-          const rate = computeRate(beta, expectedReturn, RISK_FREE_RATE);  // calculatorService
           const years = dur / 365;
-          const futureValue = computeFutureValue(inv, rate, years);        // calculatorService
+          const beta = await getBeta(ticker);
+          let rate, expectedReturn, futureValue, method;
+
+          if (beta !== null) {
+            expectedReturn = await getExpectedReturn(ticker);
+            rate = computeRate(beta, expectedReturn, RISK_FREE_RATE);
+            futureValue = computeFutureValue(inv, rate, years);
+            method = "capm";
+          } else {
+            rate = await getFundYield(ticker);
+            futureValue = computeFutureValue(inv, rate, years);
+            expectedReturn = rate;
+            method = "yield";
+          }
 
           return {
             ticker: ticker.toUpperCase(),
             futureValue: parseFloat(futureValue.toFixed(2)),
             rate: parseFloat(rate.toFixed(6)),
-            beta: parseFloat(beta.toFixed(4)),
+            beta: beta !== null ? parseFloat(beta.toFixed(4)) : null,
             expectedReturn: parseFloat(expectedReturn.toFixed(6)),
             riskFreeRate: RISK_FREE_RATE,
+            method,
           };
         } catch (err) {
           // if one ticker fails, don't crash everything — return an error for just that ticker

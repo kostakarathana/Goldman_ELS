@@ -1,8 +1,3 @@
-/**
- * app.js
- * Express server entry point.
- * Configures middleware, mounts routes, and starts the HTTP server.
- */
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
