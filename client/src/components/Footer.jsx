@@ -18,15 +18,15 @@ export default function Footer() {
           <div className="flex gap-12 text-sm">
             <div>
               <p className="text-xs text-gs-medium-gray uppercase tracking-wider mb-2">Product</p>
-              <p className="text-gs-dark-gray mb-1">Calculator</p>
-              <p className="text-gs-medium-gray mb-1">Compare</p>
-              <p className="text-gs-medium-gray">Portfolio</p>
+              <a href="#/calculator" className="block text-gs-dark-gray mb-1 hover:text-gs-navy">Calculator</a>
+              <a href="#/compare"    className="block text-gs-medium-gray mb-1 hover:text-gs-navy">Compare</a>
+              <a href="#/portfolio"  className="block text-gs-medium-gray hover:text-gs-navy">Portfolio</a>
             </div>
             <div>
               <p className="text-xs text-gs-medium-gray uppercase tracking-wider mb-2">Resources</p>
-              <p className="text-gs-dark-gray mb-1">CAPM Model</p>
-              <p className="text-gs-dark-gray mb-1">Newton API</p>
-              <p className="text-gs-dark-gray">MarketWatch</p>
+              <a href="https://en.wikipedia.org/wiki/Capital_asset_pricing_model" target="_blank" rel="noreferrer" className="block text-gs-dark-gray mb-1 hover:text-gs-navy">CAPM Model</a>
+              <a href="https://www.newtonanalytics.com/docs/api/modernportfolio.php" target="_blank" rel="noreferrer" className="block text-gs-dark-gray mb-1 hover:text-gs-navy">Newton API</a>
+              <a href="https://www.marketwatch.com/tools/top-25-mutual-funds?gaa_at=eafs&gaa_n=AWEtsqc8okgZ1FNNFCKBqYURwHb8eoHO2tSiWun8maPBLFtJJvWKSNRb6AtNxSNm8k4%3D&gaa_ts=699b8318&gaa_sig=tE4rpxuY28AlEcSU3VASNoPDXU02mA61sjnX_piOvni3uRQtdGua331WPsgsNRHiIKD3Bl5ISYKmIjfiBTReeA%3D%3D" target="_blank" rel="noreferrer" className="block text-gs-dark-gray hover:text-gs-navy">MarketWatch</a>
             </div>
           </div>
         </div>
