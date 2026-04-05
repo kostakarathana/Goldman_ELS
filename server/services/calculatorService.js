@@ -1,10 +1,3 @@
-/**
- * services/calculatorService.js
- * Core CAPM calculation logic.
- * r = riskFreeRate + beta * (expectedReturn - riskFreeRate)
- * futureValue = principal * (1 + r) ^ t
- */
-
 export function computeRate(beta, expectedReturn, riskFreeRate) {
   return riskFreeRate + beta * (expectedReturn - riskFreeRate);
 }

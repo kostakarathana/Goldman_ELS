@@ -5,6 +5,70 @@ function formatYears(years) {
   return `${years} ${years === 1 ? "Year" : "Years"}`;
 }
 
+const fmt = (n) =>
+  Number(n).toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+
+function AllocationSection({ title, subtitle, items, accentClass, investment }) {
+  if (!items?.length) return null;
+  const totalEstValue = items.reduce((sum, i) => sum + (i.estValue || 0), 0);
+  const totalAllocated = items.reduce((sum, i) => sum + (i.pct / 100) * Number(investment), 0);
+  const totalProfit = totalEstValue - totalAllocated;
+  return (
+    <div className="bg-gs-white rounded-xl border border-gs-border overflow-hidden">
+      <div className={`${accentClass} px-6 py-4`}>
+        <h3 className="text-base font-semibold text-gs-white">{title}</h3>
+        <p className="text-xs text-white/70 mt-0.5">{subtitle}</p>
+        {totalEstValue > 0 && (
+          <div className="flex gap-6 mt-3">
+            <div>
+              <p className="text-xs text-white/60">Total Est. Value</p>
+              <p className="text-lg font-bold text-gs-white">{fmt(totalEstValue)}</p>
+            </div>
+            <div>
+              <p className="text-xs text-white/60">Total Profit</p>
+              <p className="text-lg font-bold text-green-300">+{fmt(totalProfit)}</p>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="divide-y divide-gs-border">
+        {items.map((item) => {
+          const allocated = (item.pct / 100) * Number(investment);
+          const profit = item.estValue ? item.estValue - allocated : null;
+          return (
+            <div key={item.ticker} className="px-6 py-4 flex items-start gap-4">
+              <div className="shrink-0 text-center w-14">
+                <p className="text-lg font-bold text-gs-navy">{item.pct}%</p>
+                <p className="text-xs font-mono text-gs-medium-gray">{item.ticker}</p>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-gs-text">{item.rationale}</p>
+                {item.estValue && (
+                  <div className="flex gap-4 mt-1">
+                    <p className="text-xs text-gs-success font-semibold">
+                      Est. value: {fmt(item.estValue)}
+                    </p>
+                    {profit != null && (
+                      <p className="text-xs text-gs-success font-semibold">
+                        Profit: +{fmt(profit)}
+                      </p>
+                    )}
+                    {item.rate != null && (
+                      <p className="text-xs text-gs-medium-gray">
+                        CAPM rate: {item.rate}%
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function Portfolio() {
   const [funds, setFunds] = useState([]);
   const [selectedTickers, setSelectedTickers] = useState([]);
@@ -192,19 +256,37 @@ export default function Portfolio() {
           </button>
         </form>
 
-        <section className="flex-1 min-w-0 bg-gs-white rounded-xl border border-gs-border p-8 shadow-sm">
-          <h2 className="text-2xl mb-3">Suggested Allocation</h2>
-
-          {suggestion ? (
-            <div className="bg-gs-bg border border-gs-border rounded-lg p-6">
-              <pre className="whitespace-pre-wrap break-words text-sm text-gs-text m-0 leading-7 font-sans">
-                {suggestion}
-              </pre>
+        <section className="flex-1 min-w-0">
+          {suggestion && typeof suggestion === "object" ? (
+            <div className="space-y-6">
+              <AllocationSection
+                title="Your Selection — Optimized"
+                subtitle="AI-optimized weights for the funds you selected"
+                items={suggestion.userAllocation}
+                accentClass="bg-gs-navy"
+                investment={investment}
+              />
+              <AllocationSection
+                title="AI Recommended Portfolio"
+                subtitle="Best picks from all available funds for your investor profile"
+                items={suggestion.gptRecommendation}
+                accentClass="bg-gs-gold"
+                investment={investment}
+              />
+              {suggestion.recommendationReasoning && (
+                <div className="bg-gs-white rounded-xl border border-gs-border p-5">
+                  <p className="text-xs text-gs-medium-gray uppercase tracking-wider mb-2">Why this recommendation?</p>
+                  <p className="text-sm text-gs-text leading-relaxed">{suggestion.recommendationReasoning}</p>
+                </div>
+              )}
+            </div>
+          ) : suggestion ? (
+            <div className="bg-gs-white rounded-xl border border-gs-border p-6">
+              <pre className="whitespace-pre-wrap break-words text-sm text-gs-text m-0 leading-7 font-sans">{suggestion}</pre>
             </div>
           ) : (
-            <div className="bg-gs-bg border border-dashed border-gs-border rounded-lg p-6 text-sm text-gs-medium-gray leading-7">
-              Generate a portfolio suggestion to see the recommended allocation
-              and rationale here.
+            <div className="bg-gs-white rounded-xl border border-dashed border-gs-border p-8 text-sm text-gs-medium-gray leading-7 text-center">
+              Generate a portfolio suggestion to see the recommended allocation and rationale here.
             </div>
           )}
         </section>
