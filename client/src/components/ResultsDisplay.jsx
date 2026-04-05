@@ -127,29 +127,6 @@ export default function ResultsDisplay({ result, ticker, investment, duration })
           </motion.div>
         </motion.div>
 
-        {/* Calculation details */}
-        <motion.div variants={fadeUp} whileHover={{ y: -3, boxShadow: "0 10px 28px rgba(0,0,0,0.08)" }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e4eaf0", overflow: "hidden", boxShadow: "0 2px 12px rgba(0,0,0,0.04)", marginBottom: "10px" }}>
-          <div style={{ padding: "11px 20px", borderBottom: "1px solid #e4eaf0", background: "#f8fafc" }}>
-            <p style={{ fontSize: "10px", fontFamily: "Arial, sans-serif", fontWeight: 700, letterSpacing: "2.5px", textTransform: "uppercase", color: "#9aabbb", margin: 0 }}>
-              Calculation Details
-            </p>
-          </div>
-          <motion.div variants={containerVariants}>
-            {details.map(({ label, value }, i) => (
-              <motion.div key={label} variants={slideLeft}
-                style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 20px", borderBottom: i < details.length - 1 ? "1px solid #f0f4f8" : "none" }}>
-                <span style={{ fontSize: "12px", color: "#4a5e72", fontFamily: "Arial, sans-serif" }}>{label}</span>
-                <motion.span initial={{ opacity: 0, scale: 0.82 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.65 + i * 0.07, ...springPop }}
-                  style={{ fontSize: "12px", fontWeight: 700, fontFamily: "Arial, sans-serif", color: "#1a3a5c", background: "#f0f4fa", borderRadius: "5px", padding: "2px 8px" }}>
-                  {value}
-                </motion.span>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
-
         {/* Growth chart */}
         <motion.div variants={fadeUp} className="bg-white rounded-2xl border border-gs-border p-6 mb-3">
           <h3 className="text-sm font-semibold text-gs-navy mb-4" style={{ fontFamily: "Arial, sans-serif" }}>Investment Growth Over Time</h3>
@@ -177,6 +154,29 @@ export default function ResultsDisplay({ result, ticker, investment, duration })
               <Line type="monotone" dataKey="value" stroke="#B89D5A" strokeWidth={2} dot={{ r: 3, fill: "#B89D5A" }} activeDot={{ r: 5 }} />
             </LineChart>
           </ResponsiveContainer>
+        </motion.div>
+
+        {/* Calculation details */}
+        <motion.div variants={fadeUp} whileHover={{ y: -3, boxShadow: "0 10px 28px rgba(0,0,0,0.08)" }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+          style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e4eaf0", overflow: "hidden", boxShadow: "0 2px 12px rgba(0,0,0,0.04)", marginBottom: "10px" }}>
+          <div style={{ padding: "11px 20px", borderBottom: "1px solid #e4eaf0", background: "#f8fafc" }}>
+            <p style={{ fontSize: "10px", fontFamily: "Arial, sans-serif", fontWeight: 700, letterSpacing: "2.5px", textTransform: "uppercase", color: "#9aabbb", margin: 0 }}>
+              Calculation Details
+            </p>
+          </div>
+          <motion.div variants={containerVariants}>
+            {details.map(({ label, value }, i) => (
+              <motion.div key={label} variants={slideLeft}
+                style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 20px", borderBottom: i < details.length - 1 ? "1px solid #f0f4f8" : "none" }}>
+                <span style={{ fontSize: "12px", color: "#4a5e72", fontFamily: "Arial, sans-serif" }}>{label}</span>
+                <motion.span initial={{ opacity: 0, scale: 0.82 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.65 + i * 0.07, ...springPop }}
+                  style={{ fontSize: "12px", fontWeight: 700, fontFamily: "Arial, sans-serif", color: "#1a3a5c", background: "#f0f4fa", borderRadius: "5px", padding: "2px 8px" }}>
+                  {value}
+                </motion.span>
+              </motion.div>
+            ))}
+          </motion.div>
         </motion.div>
 
         <motion.p variants={fadeIn}
