@@ -1,7 +1,7 @@
 import { useState } from "react";
 import FundSelector from "../components/FundSelector";
 import InvestmentForm from "../components/InvestmentForm";
-import ResultsDisplay from "../components/ResultsDisplay/ResultsDisplay";
+import ResultsDisplay from "../components/ResultsDisplay";
 import { getFutureValue } from "../services/api";
 
 export default function Calculator() {
