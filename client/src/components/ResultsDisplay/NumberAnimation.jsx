@@ -1,5 +1,3 @@
-// visually counts up from 0 to the final value in the Estimated Future Value box
-
 import { useEffect, useState } from "react";
 import { animate } from "framer-motion";
 
