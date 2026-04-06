@@ -47,7 +47,7 @@ export default function Header({ currentRoute }) {
         </div>
       </div>
       {/* Navy accent line */}
-      <div className="h-0.75 bg-gs-navy" />
+      <div className="h-[3px] bg-gs-navy" />
     </header>
   );
 }

@@ -1,12 +1,15 @@
 import express from "express";
+import fs from "fs";
 import { computeRate, computeFutureValue } from "../services/calculatorService.js";
 import { getBeta } from "../services/betaService.js";
 import { getExpectedReturn } from "../services/returnService.js";
-import { getFundByTicker } from "../services/fundService.js";
 
 const router = express.Router();
 
-// risk‑free rate used throughout (could be configurable)
+const fundsData = JSON.parse(
+  fs.readFileSync(new URL("../data/funds.json", import.meta.url))
+);
+
 const RISK_FREE_RATE = 0.0425;
 
 router.get("/future-value", async (req, res) => {
@@ -17,19 +20,17 @@ router.get("/future-value", async (req, res) => {
 
   try {
     const years = Number(duration) / 365;
+    const fund = fundsData.top_25_mutual_funds.find(
+      (f) => f.symbol.toUpperCase() === ticker.toUpperCase()
+    );
+    const fundName = fund ? fund.fund_name : ticker;
+
+    const beta = await getBeta(ticker);
+    const expectedReturn = await getExpectedReturn(ticker);
+    const rate = computeRate(beta, expectedReturn, RISK_FREE_RATE);
     const futureValue = computeFutureValue(Number(investment), rate, years);
 
-    const fund = await getFundByTicker(ticker);
-    const fundName = fund ? fund.name : ticker;
-
-    res.json({
-      futureValue,
-      rate,
-      beta,
-      expectedReturn,
-      riskFreeRate: RISK_FREE_RATE,
-      fundName,
-    });
+    res.json({ futureValue, rate, beta, expectedReturn, riskFreeRate: RISK_FREE_RATE, fundName });
   } catch (err) {
     console.error("/future-value error", err);
     res.status(500).json({ error: "calculation failed" });
