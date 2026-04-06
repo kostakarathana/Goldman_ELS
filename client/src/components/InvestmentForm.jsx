@@ -10,7 +10,7 @@ export default function InvestmentForm({ investment, onInvestmentChange, onDurat
   useEffect(() => {
     const total = Math.max(1, years * 365 + months * 30 + days);
     onDurationChange(String(total));
-  }, [years, months, days]);
+  }, [years, months, days, onDurationChange]);
 
   const parts = [
     years > 0 ? `${years} ${years === 1 ? "Year" : "Years"}` : null,

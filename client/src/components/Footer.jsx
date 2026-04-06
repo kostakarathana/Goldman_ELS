@@ -24,8 +24,8 @@ export default function Footer() {
             <div>
               <p className={`text-xs uppercase tracking-wider mb-2 ${dark ? "text-[#6a8aaa]" : "text-gs-medium-gray"}`}>Product</p>
               <a href="#/calculator" className={`block mb-1 ${dark ? "text-[#8aa8c4] hover:text-[#7fb3e0]" : "text-gs-dark-gray hover:text-gs-navy"}`}>Calculator</a>
-              <a href="#/compare" className={`block mb-1 ${dark ? "text-[#6a8aaa] hover:text-[#7fb3e0]" : "text-gs-medium-gray hover:text-gs-navy"}`}>Compare</a>
-              <a href="#/portfolio" className={`block ${dark ? "text-[#6a8aaa] hover:text-[#7fb3e0]" : "text-gs-medium-gray hover:text-gs-navy"}`}>Portfolio</a>
+              <a href="#/compare" className={`block mb-1 ${dark ? "text-[#8aa8c4] hover:text-[#7fb3e0]" : "text-gs-dark-gray hover:text-gs-navy"}`}>Compare</a>
+              <a href="#/portfolio" className={`block ${dark ? "text-[#8aa8c4] hover:text-[#7fb3e0]" : "text-gs-dark-gray hover:text-gs-navy"}`}>Portfolio</a>
             </div>
             <div>
               <p className={`text-xs uppercase tracking-wider mb-2 ${dark ? "text-[#6a8aaa]" : "text-gs-medium-gray"}`}>Resources</p>

@@ -11,7 +11,12 @@ import useTheme from "./hooks/useTheme";
 export const ThemeContext = createContext({ dark: false, toggle: () => {} });
 
 function getCurrentRoute() {
-  const route = window.location.hash.replace("#", "") || "/calculator";
+  let route = window.location.hash.replace("#", "") || "/calculator";
+
+  // Strip trailing slash so "/compare/" matches "/compare"
+  if (route.length > 1 && route.endsWith("/")) {
+    route = route.slice(0, -1);
+  }
 
   if (route === "/" || route === "") {
     return "/calculator";

@@ -110,7 +110,6 @@ export default function Compare() {
 
           <InvestmentForm
             investment={investment}
-            duration={duration}
             onInvestmentChange={setInvestment}
             onDurationChange={setDuration}
           />
