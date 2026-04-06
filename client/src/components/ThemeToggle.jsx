@@ -7,11 +7,9 @@ export default function ThemeToggle({ dark, toggle }) {
       style={{ background: dark ? "#1A3B5C" : "#D9D5CC" }}
     >
       <span
-        className="absolute w-5 h-5 rounded-full bg-white shadow-md transition-transform duration-300 flex items-center justify-center text-xs"
+        className="absolute w-5 h-5 rounded-full bg-white shadow-md transition-transform duration-300"
         style={{ transform: dark ? "translateX(26px)" : "translateX(0px)" }}
-      >
-        {dark ? "🌙" : "☀️"}
-      </span>
+      />
     </button>
   );
 }

@@ -13,7 +13,7 @@ export default function Header({ currentRoute }) {
 
   return (
     <header className={`border-b transition-colors duration-300 ${dark ? "bg-[#0f1a2e] border-[#1e3050]" : "bg-gs-white border-gs-border"}`}>
-      <div className="max-w-5xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-8">
         {/* Top bar */}
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center gap-3">

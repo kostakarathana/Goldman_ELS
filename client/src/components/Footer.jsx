@@ -6,7 +6,7 @@ export default function Footer() {
 
   return (
     <footer className={`border-t mt-16 transition-colors duration-300 ${dark ? "bg-[#0f1a2e] border-[#1e3050]" : "border-gs-border bg-gs-white"}`}>
-      <div className="max-w-5xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-8 py-8">
         <div className="flex items-start justify-between mb-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
