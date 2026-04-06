@@ -1,4 +1,10 @@
-export default function Header() {
+const navItems = [
+  { label: "Calculator", href: "#/calculator", route: "/calculator" },
+  { label: "Compare", href: "#/compare", route: "/compare" },
+  { label: "Portfolio", href: "#/portfolio", route: "/portfolio" },
+];
+
+export default function Header({ currentRoute }) {
   return (
     <header className="bg-gs-white border-b border-gs-border">
       <div className="max-w-5xl mx-auto px-6">
@@ -20,11 +26,23 @@ export default function Header() {
             </div>
           </div>
           <nav className="flex items-center gap-6 text-sm text-gs-dark-gray">
-            <span className="border-b-2 border-gs-navy text-gs-navy pb-1 cursor-default">
-              Calculator
-            </span>
-            <span className="text-gs-medium-gray cursor-default">Compare</span>
-            <span className="text-gs-medium-gray cursor-default">Portfolio</span>
+            {navItems.map((item) => {
+              const isActive = currentRoute === item.route;
+
+              return (
+                <a
+                  key={item.route}
+                  href={item.href}
+                  className={`pb-1 transition-colors ${
+                    isActive
+                      ? "border-b-2 border-gs-navy text-gs-navy"
+                      : "text-gs-medium-gray hover:text-gs-dark-gray"
+                  }`}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
           </nav>
         </div>
       </div>

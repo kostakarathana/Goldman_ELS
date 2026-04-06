@@ -1,12 +1,8 @@
-/**
- * routes/funds.js
- * GET /api/funds
- * Returns the list of available mutual funds.
- */
 import express from "express";
 import { getAllFunds } from "../services/fundService.js";
 
 const router = express.Router();
+const fundsData = JSON.parse(fs.readFileSync(new URL("../data/funds.json", import.meta.url)));
 
 router.get("/", async (req, res) => {
   try {

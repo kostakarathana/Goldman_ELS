@@ -12,3 +12,37 @@ export async function getFutureValue(ticker, investment, duration) {
   if (!res.ok) throw new Error("Calculation failed");
   return res.json();
 }
+
+export async function compareFunds(tickers, investment, duration) {
+  const params = new URLSearchParams({ investment, duration });
+  tickers.forEach((t) => params.append("tickers", t));
+  const res = await fetch(`${BASE_URL}/compare?${params}`);
+  if (!res.ok) throw new Error("Comparison failed");
+  return res.json();
+}
+
+export async function getPortfolioSuggestion({
+  tickers,
+  riskTolerance,
+  duration,
+  investment,
+}) {
+  const res = await fetch(`${BASE_URL}/portfolio`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      tickers,
+      riskTolerance,
+      duration,
+      investment,
+    }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Portfolio generation failed");
+  }
+
+  return res.json();
+}

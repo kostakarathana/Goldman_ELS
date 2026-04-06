@@ -7,7 +7,7 @@ import { getFutureValue } from "../services/api";
 export default function Calculator() {
   const [ticker, setTicker] = useState("");
   const [investment, setInvestment] = useState("");
-  const [duration, setDuration] = useState("5");
+  const [duration, setDuration] = useState("365");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -18,11 +18,13 @@ export default function Calculator() {
   const canCalculate = ticker && investment && duration;
 
   const handleCalculate = async () => {
+    const requestSnapshot = { ticker, investment, duration };
+
     setLoading(true);
     setError(null);
-    setSnapshot({ ticker, investment, duration });
     try {
       const data = await getFutureValue(ticker, investment, duration);
+      setSnapshot(requestSnapshot);
       setResult(data);
     } catch (err) {
       setError("Calculation failed. Please try again.");
@@ -49,7 +51,6 @@ export default function Calculator() {
           <FundSelector selected={ticker} onSelect={setTicker} />
           <InvestmentForm
             investment={investment}
-            duration={duration}
             onInvestmentChange={setInvestment}
             onDurationChange={setDuration}
           />
