@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { ThemeContext } from "../App";
 
 export default function InvestmentForm({ investment, onInvestmentChange, onDurationChange }) {
+  const { dark } = useContext(ThemeContext);
   const [years, setYears] = useState(1);
   const [months, setMonths] = useState(0);
   const [days, setDays] = useState(0);
@@ -17,13 +19,17 @@ export default function InvestmentForm({ investment, onInvestmentChange, onDurat
   ].filter(Boolean);
   const summary = parts.length > 0 ? parts.join(", ") : "0 Days";
 
+  const inputCls = dark
+    ? "bg-[#1a2a3e] border-[#2a3a4e] text-[#d4d8dd] focus:border-[#4A90D9] focus:ring-1 focus:ring-[#4A90D9]"
+    : "bg-gs-white border-gs-border text-gs-text focus:border-gs-navy focus:ring-1 focus:ring-gs-navy";
+
   return (
     <div className="space-y-6 mb-6">
       {/* Investment amount */}
       <div>
-        <label className="block text-sm text-gs-dark-gray mb-2">Initial Investment</label>
+        <label className={`block text-sm mb-2 ${dark ? "text-[#6a8aaa]" : "text-gs-dark-gray"}`}>Initial Investment</label>
         <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gs-medium-gray text-lg">$</span>
+          <span className={`absolute left-4 top-1/2 -translate-y-1/2 text-lg ${dark ? "text-[#4a6a86]" : "text-gs-medium-gray"}`}>$</span>
           <input
             type="number"
             min="0"
@@ -31,7 +37,7 @@ export default function InvestmentForm({ investment, onInvestmentChange, onDurat
             placeholder="10,000"
             value={investment}
             onChange={(e) => onInvestmentChange(e.target.value)}
-            className="w-full border border-gs-border bg-gs-white text-gs-text pl-9 pr-4 py-3 rounded-lg focus:outline-none focus:border-gs-navy focus:ring-1 focus:ring-gs-navy transition-colors text-lg"
+            className={`w-full border pl-9 pr-4 py-3 rounded-lg focus:outline-none transition-colors text-lg ${inputCls}`}
           />
         </div>
       </div>
@@ -39,8 +45,8 @@ export default function InvestmentForm({ investment, onInvestmentChange, onDurat
       {/* Duration */}
       <div>
         <div className="flex justify-between items-baseline mb-4">
-          <label className="text-sm text-gs-dark-gray">Investment Duration</label>
-          <span className="text-sm font-semibold text-gs-navy">{summary}</span>
+          <label className={`text-sm ${dark ? "text-[#6a8aaa]" : "text-gs-dark-gray"}`}>Investment Duration</label>
+          <span className={`text-sm font-semibold ${dark ? "text-[#7fb3e0]" : "text-gs-navy"}`}>{summary}</span>
         </div>
 
         <div className="space-y-4">
@@ -51,7 +57,7 @@ export default function InvestmentForm({ investment, onInvestmentChange, onDurat
           ].map(({ label, value, setValue, max, marks }) => (
             <div key={label}>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-gs-medium-gray">{label}</span>
+                <span className={`text-xs ${dark ? "text-[#5a7a96]" : "text-gs-medium-gray"}`}>{label}</span>
                 <input
                   type="number"
                   min="0"
@@ -61,7 +67,11 @@ export default function InvestmentForm({ investment, onInvestmentChange, onDurat
                     const v = Math.min(max, Math.max(0, Number(e.target.value) || 0));
                     setValue(v);
                   }}
-                  className="w-14 text-xs text-center font-semibold text-gs-navy border border-gs-border rounded-md py-0.5 focus:outline-none focus:border-gs-navy"
+                  className={`w-14 text-xs text-center font-semibold border rounded-md py-0.5 focus:outline-none ${
+                    dark
+                      ? "bg-[#1a2a3e] border-[#2a3a4e] text-[#7fb3e0] focus:border-[#4A90D9]"
+                      : "text-gs-navy border-gs-border focus:border-gs-navy"
+                  }`}
                 />
               </div>
               <input
@@ -72,7 +82,7 @@ export default function InvestmentForm({ investment, onInvestmentChange, onDurat
                 onChange={(e) => setValue(Number(e.target.value))}
                 className="w-full cursor-pointer"
               />
-              <div className="flex justify-between text-xs text-gs-medium-gray mt-0.5">
+              <div className={`flex justify-between text-xs mt-0.5 ${dark ? "text-[#5a7a96]" : "text-gs-medium-gray"}`}>
                 {marks.map((m) => <span key={m}>{m}</span>)}
               </div>
             </div>

@@ -1,8 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import toast from "react-hot-toast";
 import { getFunds, compareFunds } from "../services/api";
 import InvestmentForm from "../components/InvestmentForm";
+import FundTooltip from "../components/FundTooltip";
+import { CompareSkeleton } from "../components/Skeleton";
+import { ThemeContext } from "../App";
 
 export default function Compare() {
+  const { dark } = useContext(ThemeContext);
   const [funds, setFunds] = useState([]);
   const [selectedTickers, setSelectedTickers] = useState([]);
   const [investment, setInvestment] = useState("");
@@ -32,8 +37,11 @@ export default function Compare() {
     try {
       const data = await compareFunds(selectedTickers, investment, duration);
       setResults(data);
+      const successful = data.filter((r) => !r.error).length;
+      toast.success(`Compared ${successful} fund${successful !== 1 ? "s" : ""}`);
     } catch {
       setError("Comparison failed. Please try again.");
+      toast.error("Comparison failed");
     } finally {
       setLoading(false);
     }
@@ -53,31 +61,35 @@ export default function Compare() {
 
   const best = results?.filter((r) => !r.error).sort((a, b) => b.futureValue - a.futureValue)[0];
 
+  const cardBg = dark ? "bg-[#0f1a2e] border-[#1e3050]" : "bg-gs-white border-gs-border";
+
   return (
     <main className="max-w-7xl mx-auto px-8 py-10">
       <div className="text-center mb-10">
-        <h1 className="text-3xl mb-3">Compare Funds</h1>
-        <p className="text-base text-gs-dark-gray max-w-xl mx-auto leading-relaxed">
+        <h1 className={`text-3xl mb-3 ${dark ? "text-[#7fb3e0]" : ""}`}>Compare Funds</h1>
+        <p className={`text-base max-w-xl mx-auto leading-relaxed ${dark ? "text-[#6a8aaa]" : "text-gs-dark-gray"}`}>
           Select two or more funds to compare their projected growth side by side using CAPM.
         </p>
       </div>
 
       <div className="flex gap-10 items-start">
         {/* Left card */}
-        <div className="self-start bg-gs-white rounded-xl border border-gs-border p-8 shadow-sm shrink-0 w-5/12">
+        <div className={`self-start rounded-xl border p-8 shadow-sm shrink-0 w-5/12 transition-colors duration-300 ${cardBg}`}>
           <div className="mb-6">
             <div className="flex items-baseline justify-between mb-2">
-              <label className="block text-sm text-gs-dark-gray">Select Funds <span className="text-gs-medium-gray">(2 or more)</span></label>
-              <span className="text-xs text-gs-medium-gray">{selectedTickers.length} selected</span>
+              <label className={`block text-sm ${dark ? "text-[#6a8aaa]" : "text-gs-dark-gray"}`}>Select Funds <span className={dark ? "text-[#4a6a86]" : "text-gs-medium-gray"}>(2 or more)</span></label>
+              <span className={`text-xs ${dark ? "text-[#4a6a86]" : "text-gs-medium-gray"}`}>{selectedTickers.length} selected</span>
             </div>
-            <div className="border border-gs-border rounded-lg overflow-y-auto max-h-48">
+            <div className={`border rounded-lg overflow-y-auto max-h-48 ${dark ? "border-[#2a3a4e]" : "border-gs-border"}`}>
               {funds.map((fund) => {
                 const checked = selectedTickers.includes(fund.symbol);
                 return (
                   <label
                     key={fund.symbol}
-                    className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors text-sm border-b last:border-b-0 border-gs-light-gray ${
-                      checked ? "bg-gs-navy/5" : "hover:bg-gs-light-gray"
+                    className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors text-sm border-b last:border-b-0 ${
+                      dark
+                        ? `border-[#1e3050] ${checked ? "bg-[#1a2a3e]" : "hover:bg-[#111d30]"}`
+                        : `border-gs-light-gray ${checked ? "bg-gs-navy/5" : "hover:bg-gs-light-gray"}`
                     }`}
                   >
                     <input
@@ -86,8 +98,10 @@ export default function Compare() {
                       onChange={() => toggleTicker(fund.symbol)}
                       className="accent-gs-navy w-4 h-4 shrink-0"
                     />
-                    <span className="font-mono text-xs text-gs-navy w-12 shrink-0">{fund.symbol}</span>
-                    <span className="text-gs-dark-gray truncate">{fund.fund_name}</span>
+                    <FundTooltip ticker={fund.symbol} dark={dark}>
+                      <span className={`font-mono text-xs w-12 shrink-0 ${dark ? "text-[#4A90D9]" : "text-gs-navy"}`}>{fund.symbol}</span>
+                    </FundTooltip>
+                    <span className={`truncate ${dark ? "text-[#8aa8c4]" : "text-gs-dark-gray"}`}>{fund.fund_name}</span>
                   </label>
                 );
               })}
@@ -108,8 +122,12 @@ export default function Compare() {
             onClick={handleCompare}
             className={`w-full py-3 px-6 text-sm font-semibold tracking-wide rounded-lg transition-all ${
               canCompare && !loading
-                ? "bg-gs-navy text-gs-white hover:bg-gs-navy-dark cursor-pointer shadow-md hover:shadow-lg"
-                : "bg-gs-light-gray text-gs-medium-gray cursor-not-allowed"
+                ? dark
+                  ? "bg-[#4A90D9] text-white hover:bg-[#3a7bc8] cursor-pointer shadow-md hover:shadow-lg"
+                  : "bg-gs-navy text-gs-white hover:bg-gs-navy-dark cursor-pointer shadow-md hover:shadow-lg"
+                : dark
+                  ? "bg-[#1a2a3e] text-[#3a5068] cursor-not-allowed"
+                  : "bg-gs-light-gray text-gs-medium-gray cursor-not-allowed"
             }`}
           >
             {loading ? "Comparing..." : "Compare Funds"}
@@ -118,17 +136,13 @@ export default function Compare() {
 
         {/* Right: results */}
         <div className="flex-1 min-w-0">
-          {loading && (
-            <div className="text-center py-20 text-gs-medium-gray">
-              <p className="text-lg">Fetching data for {selectedTickers.length} funds...</p>
-            </div>
-          )}
+          {loading && <CompareSkeleton count={selectedTickers.length} />}
 
           {results && (
             <div>
               <div className="text-center mb-6">
-                <h2 className="text-2xl mb-1">Comparison Results</h2>
-                <p className="text-sm text-gs-dark-gray">{fmt(Number(investment))} over {formatDuration(days)}</p>
+                <h2 className={`text-2xl mb-1 ${dark ? "text-[#7fb3e0]" : ""}`}>Comparison Results</h2>
+                <p className={`text-sm ${dark ? "text-[#6a8aaa]" : "text-gs-dark-gray"}`}>{fmt(Number(investment))} over {formatDuration(days)}</p>
               </div>
 
               <div className="grid gap-4">
@@ -136,8 +150,8 @@ export default function Compare() {
                   const isTop = r.ticker === best?.ticker;
                   if (r.error) {
                     return (
-                      <div key={r.ticker} className="bg-gs-white rounded-xl border border-gs-border p-5 opacity-60">
-                        <p className="text-sm font-mono text-gs-navy font-semibold">{r.ticker}</p>
+                      <div key={r.ticker} className={`rounded-xl border p-5 opacity-60 ${cardBg}`}>
+                        <p className={`text-sm font-mono font-semibold ${dark ? "text-[#4A90D9]" : "text-gs-navy"}`}>{r.ticker}</p>
                         <p className="text-sm text-red-400 mt-1">{r.error}</p>
                       </div>
                     );
@@ -147,13 +161,15 @@ export default function Compare() {
                   return (
                     <div
                       key={r.ticker}
-                      className={`rounded-xl border p-5 ${
-                        isTop ? "bg-gs-navy border-gs-navy text-gs-white" : "bg-gs-white border-gs-border"
+                      className={`rounded-xl border p-5 transition-colors ${
+                        isTop
+                          ? dark ? "bg-[#0f2a4a] border-[#4A90D9] text-white" : "bg-gs-navy border-gs-navy text-gs-white"
+                          : cardBg
                       }`}
                     >
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <span className={`font-mono text-sm font-bold ${isTop ? "text-gs-gold-light" : "text-gs-navy"}`}>
+                          <span className={`font-mono text-sm font-bold ${isTop ? (dark ? "text-[#D4BA7A]" : "text-gs-gold-light") : dark ? "text-[#4A90D9]" : "text-gs-navy"}`}>
                             {r.ticker}
                           </span>
                           {isTop && (
@@ -163,7 +179,7 @@ export default function Compare() {
                           )}
                         </div>
                         <div className="text-right">
-                          <p className={`text-2xl font-bold ${isTop ? "text-gs-white" : "text-gs-text"}`}>
+                          <p className={`text-2xl font-bold ${isTop ? "text-white" : dark ? "text-[#d4d8dd]" : "text-gs-text"}`}>
                             {r.futureValue != null ? fmt(r.futureValue) : "N/A"}
                           </p>
                           {gain != null && (
@@ -173,7 +189,7 @@ export default function Compare() {
                           )}
                         </div>
                       </div>
-                      <div className={`grid grid-cols-3 gap-4 text-xs ${isTop ? "text-gs-gold-light/80" : "text-gs-medium-gray"}`}>
+                      <div className={`grid grid-cols-3 gap-4 text-xs ${isTop ? (dark ? "text-[#D4BA7A]/80" : "text-gs-gold-light/80") : dark ? "text-[#6a8aaa]" : "text-gs-medium-gray"}`}>
                         {[
                           ["CAPM Rate", r.rate != null ? pct(r.rate) : "N/A"],
                           ["Beta", r.beta != null ? r.beta.toFixed(4) : "N/A"],
@@ -181,7 +197,7 @@ export default function Compare() {
                         ].map(([label, value]) => (
                           <div key={label}>
                             <p className="uppercase tracking-wider mb-1">{label}</p>
-                            <p className={`font-mono font-semibold text-sm ${isTop ? "text-gs-white" : "text-gs-navy"}`}>
+                            <p className={`font-mono font-semibold text-sm ${isTop ? "text-white" : dark ? "text-[#7fb3e0]" : "text-gs-navy"}`}>
                               {value}
                             </p>
                           </div>
@@ -192,14 +208,14 @@ export default function Compare() {
                 })}
               </div>
 
-              <p className="text-[11px] text-gs-medium-gray mt-4 leading-relaxed text-center max-w-lg mx-auto">
+              <p className={`text-[11px] mt-4 leading-relaxed text-center max-w-lg mx-auto ${dark ? "text-[#5a7a96]" : "text-gs-medium-gray"}`}>
                 Projections are based on CAPM using historical beta and expected returns. Past performance does not guarantee future results.
               </p>
             </div>
           )}
 
           {!loading && !results && (
-            <div className="text-center py-20 text-gs-medium-gray">
+            <div className={`text-center py-20 ${dark ? "text-[#4a6a86]" : "text-gs-medium-gray"}`}>
               <p className="text-lg mb-2">No comparison yet</p>
               <p className="text-sm">Select at least 2 funds and enter your investment to get started.</p>
             </div>

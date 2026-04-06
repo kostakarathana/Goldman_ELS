@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import toast from "react-hot-toast";
 import { getFunds, getPortfolioSuggestion } from "../services/api";
+import { ThemeContext } from "../App";
 
 function formatYears(years) {
   return `${years} ${years === 1 ? "Year" : "Years"}`;
@@ -8,13 +10,13 @@ function formatYears(years) {
 const fmt = (n) =>
   Number(n).toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
-function AllocationSection({ title, subtitle, items, accentClass, investment }) {
+function AllocationSection({ title, subtitle, items, accentClass, investment, dark }) {
   if (!items?.length) return null;
   const totalEstValue = items.reduce((sum, i) => sum + (i.estValue || 0), 0);
   const totalAllocated = items.reduce((sum, i) => sum + (i.pct / 100) * Number(investment), 0);
   const totalProfit = totalEstValue - totalAllocated;
   return (
-    <div className="bg-gs-white rounded-xl border border-gs-border overflow-hidden">
+    <div className={`rounded-xl border overflow-hidden ${dark ? "bg-[#0f1a2e] border-[#1e3050]" : "bg-gs-white border-gs-border"}`}>
       <div className={`${accentClass} px-6 py-4`}>
         <h3 className="text-base font-semibold text-gs-white">{title}</h3>
         <p className="text-xs text-white/70 mt-0.5">{subtitle}</p>
@@ -31,18 +33,18 @@ function AllocationSection({ title, subtitle, items, accentClass, investment }) 
           </div>
         )}
       </div>
-      <div className="divide-y divide-gs-border">
+      <div className={`divide-y ${dark ? "divide-[#1e3050]" : "divide-gs-border"}`}>
         {items.map((item) => {
           const allocated = (item.pct / 100) * Number(investment);
           const profit = item.estValue ? item.estValue - allocated : null;
           return (
             <div key={item.ticker} className="px-6 py-4 flex items-start gap-4">
               <div className="shrink-0 text-center w-14">
-                <p className="text-lg font-bold text-gs-navy">{item.pct}%</p>
-                <p className="text-xs font-mono text-gs-medium-gray">{item.ticker}</p>
+                <p className={`text-lg font-bold ${dark ? "text-[#4A90D9]" : "text-gs-navy"}`}>{item.pct}%</p>
+                <p className={`text-xs font-mono ${dark ? "text-[#5a7a96]" : "text-gs-medium-gray"}`}>{item.ticker}</p>
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gs-text">{item.rationale}</p>
+                <p className={`text-sm ${dark ? "text-[#d4d8dd]" : "text-gs-text"}`}>{item.rationale}</p>
                 {item.estValue && (
                   <div className="flex gap-4 mt-1">
                     <p className="text-xs text-gs-success font-semibold">
@@ -54,7 +56,7 @@ function AllocationSection({ title, subtitle, items, accentClass, investment }) 
                       </p>
                     )}
                     {item.rate != null && (
-                      <p className="text-xs text-gs-medium-gray">
+                      <p className={`text-xs ${dark ? "text-[#5a7a96]" : "text-gs-medium-gray"}`}>
                         CAPM rate: {item.rate}%
                       </p>
                     )}
@@ -70,6 +72,7 @@ function AllocationSection({ title, subtitle, items, accentClass, investment }) 
 }
 
 export default function Portfolio() {
+  const { dark } = useContext(ThemeContext);
   const [funds, setFunds] = useState([]);
   const [selectedTickers, setSelectedTickers] = useState([]);
   const [investment, setInvestment] = useState("");
@@ -116,19 +119,26 @@ export default function Portfolio() {
       });
 
       setSuggestion(data.suggestion || "");
+      toast.success("Portfolio generated successfully");
     } catch (err) {
       setSuggestion("");
       setError("Portfolio generation failed. Please try again.");
+      toast.error("Portfolio generation failed");
     } finally {
       setLoading(false);
     }
   };
 
+  const cardBg = dark ? "bg-[#0f1a2e] border-[#1e3050]" : "bg-gs-white border-gs-border";
+  const inputCls = dark
+    ? "bg-[#1a2a3e] border-[#2a3a4e] text-[#d4d8dd] focus:border-[#4A90D9] focus:ring-1 focus:ring-[#4A90D9]"
+    : "bg-gs-white border-gs-border text-gs-text focus:border-gs-navy focus:ring-1 focus:ring-gs-navy";
+
   return (
     <main className="max-w-7xl mx-auto px-8 py-10">
       <div className="text-center mb-10">
-        <h1 className="text-3xl mb-3">AI Portfolio Builder</h1>
-        <p className="text-base text-gs-dark-gray max-w-2xl mx-auto leading-relaxed">
+        <h1 className={`text-3xl mb-3 ${dark ? "text-[#7fb3e0]" : ""}`}>AI Portfolio Builder</h1>
+        <p className={`text-base max-w-2xl mx-auto leading-relaxed ${dark ? "text-[#6a8aaa]" : "text-gs-dark-gray"}`}>
           Select one or more mutual funds, set your investment profile, and
           generate a portfolio suggestion.
         </p>
@@ -137,22 +147,26 @@ export default function Portfolio() {
       <div className="flex gap-10 items-start">
         <form
           onSubmit={handleSubmit}
-          className="self-start bg-gs-white rounded-xl border border-gs-border p-8 shadow-sm shrink-0 w-5/12"
+          className={`self-start rounded-xl border p-8 shadow-sm shrink-0 w-5/12 transition-colors duration-300 ${cardBg}`}
         >
           <div className="mb-6">
             <div className="flex items-baseline justify-between mb-2">
-              <label className="block text-sm text-gs-dark-gray">
+              <label className={`block text-sm ${dark ? "text-[#6a8aaa]" : "text-gs-dark-gray"}`}>
                 Mutual Funds
               </label>
-              <span className="text-xs text-gs-medium-gray">
+              <span className={`text-xs ${dark ? "text-[#4a6a86]" : "text-gs-medium-gray"}`}>
                 {selectedTickers.length} selected
               </span>
             </div>
-            <div className="border border-gs-border rounded-lg max-h-72 overflow-y-auto">
+            <div className={`border rounded-lg max-h-72 overflow-y-auto ${dark ? "border-[#2a3a4e]" : "border-gs-border"}`}>
               {funds.map((fund) => (
                 <label
                   key={fund.symbol}
-                  className="flex items-start gap-3 px-4 py-3 border-b last:border-b-0 border-gs-light-gray cursor-pointer hover:bg-gs-bg"
+                  className={`flex items-start gap-3 px-4 py-3 border-b last:border-b-0 cursor-pointer ${
+                    dark
+                      ? `border-[#1e3050] hover:bg-[#111d30] ${selectedTickers.includes(fund.symbol) ? "bg-[#1a2a3e]" : ""}`
+                      : `border-gs-light-gray hover:bg-gs-bg ${selectedTickers.includes(fund.symbol) ? "bg-gs-navy/5" : ""}`
+                  }`}
                 >
                   <input
                     type="checkbox"
@@ -160,7 +174,7 @@ export default function Portfolio() {
                     onChange={() => toggleTicker(fund.symbol)}
                     className="mt-1 h-4 w-4 accent-gs-navy"
                   />
-                  <span className="text-sm text-gs-text leading-relaxed">
+                  <span className={`text-sm leading-relaxed ${dark ? "text-[#d4d8dd]" : "text-gs-text"}`}>
                     <span className="font-semibold">{fund.symbol}</span>
                     {" - "}
                     {fund.fund_name}
@@ -172,11 +186,11 @@ export default function Portfolio() {
 
           <div className="space-y-6 mb-6">
             <div>
-              <label className="block text-sm text-gs-dark-gray mb-2">
+              <label className={`block text-sm mb-2 ${dark ? "text-[#6a8aaa]" : "text-gs-dark-gray"}`}>
                 Total Investment
               </label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gs-medium-gray text-lg">
+                <span className={`absolute left-4 top-1/2 -translate-y-1/2 text-lg ${dark ? "text-[#4a6a86]" : "text-gs-medium-gray"}`}>
                   $
                 </span>
                 <input
@@ -186,17 +200,17 @@ export default function Portfolio() {
                   placeholder="25,000"
                   value={investment}
                   onChange={(event) => setInvestment(event.target.value)}
-                  className="w-full border border-gs-border bg-gs-white text-gs-text pl-9 pr-4 py-3 rounded-lg focus:outline-none focus:border-gs-navy focus:ring-1 focus:ring-gs-navy transition-colors text-lg"
+                  className={`w-full border pl-9 pr-4 py-3 rounded-lg focus:outline-none transition-colors text-lg ${inputCls}`}
                 />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between items-baseline mb-2">
-                <label className="text-sm text-gs-dark-gray">
+                <label className={`text-sm ${dark ? "text-[#6a8aaa]" : "text-gs-dark-gray"}`}>
                   Investment Horizon
                 </label>
-                <span className="text-lg font-semibold text-gs-navy">
+                <span className={`text-lg font-semibold ${dark ? "text-[#7fb3e0]" : "text-gs-navy"}`}>
                   {formatYears(Number(duration))}
                 </span>
               </div>
@@ -208,7 +222,7 @@ export default function Portfolio() {
                 onChange={(event) => setDuration(event.target.value)}
                 className="w-full cursor-pointer"
               />
-              <div className="flex justify-between text-xs text-gs-medium-gray mt-1">
+              <div className={`flex justify-between text-xs mt-1 ${dark ? "text-[#5a7a96]" : "text-gs-medium-gray"}`}>
                 <span>1 Year</span>
                 <span>10 Years</span>
                 <span>20 Years</span>
@@ -218,10 +232,10 @@ export default function Portfolio() {
 
             <div>
               <div className="flex justify-between items-baseline mb-2">
-                <label className="text-sm text-gs-dark-gray">
+                <label className={`text-sm ${dark ? "text-[#6a8aaa]" : "text-gs-dark-gray"}`}>
                   Risk Tolerance
                 </label>
-                <span className="text-lg font-semibold text-gs-navy">
+                <span className={`text-lg font-semibold ${dark ? "text-[#7fb3e0]" : "text-gs-navy"}`}>
                   {riskTolerance}/10
                 </span>
               </div>
@@ -233,7 +247,7 @@ export default function Portfolio() {
                 onChange={(event) => setRiskTolerance(event.target.value)}
                 className="w-full cursor-pointer"
               />
-              <div className="flex justify-between text-xs text-gs-medium-gray mt-1">
+              <div className={`flex justify-between text-xs mt-1 ${dark ? "text-[#5a7a96]" : "text-gs-medium-gray"}`}>
                 <span>Conservative</span>
                 <span>Balanced</span>
                 <span>Aggressive</span>
@@ -248,8 +262,12 @@ export default function Portfolio() {
             disabled={!canGenerate || loading}
             className={`w-full py-3 px-6 text-sm font-semibold tracking-wide rounded-lg transition-all ${
               canGenerate && !loading
-                ? "bg-gs-navy text-gs-white hover:bg-gs-navy-dark cursor-pointer shadow-md hover:shadow-lg"
-                : "bg-gs-light-gray text-gs-medium-gray cursor-not-allowed"
+                ? dark
+                  ? "bg-[#4A90D9] text-white hover:bg-[#3a7bc8] cursor-pointer shadow-md hover:shadow-lg"
+                  : "bg-gs-navy text-gs-white hover:bg-gs-navy-dark cursor-pointer shadow-md hover:shadow-lg"
+                : dark
+                  ? "bg-[#1a2a3e] text-[#3a5068] cursor-not-allowed"
+                  : "bg-gs-light-gray text-gs-medium-gray cursor-not-allowed"
             }`}
           >
             {loading ? "Generating Portfolio..." : "Generate Portfolio Suggestion"}
@@ -257,7 +275,15 @@ export default function Portfolio() {
         </form>
 
         <section className="flex-1 min-w-0">
-          {suggestion && typeof suggestion === "object" ? (
+          {loading && (
+            <div className="space-y-4">
+              <div className="skeleton h-48 rounded-xl" />
+              <div className="skeleton h-48 rounded-xl" />
+              <div className="skeleton h-24 rounded-xl" />
+            </div>
+          )}
+
+          {!loading && suggestion && typeof suggestion === "object" ? (
             <div className="space-y-6">
               <AllocationSection
                 title="Your Selection — Optimized"
@@ -265,6 +291,7 @@ export default function Portfolio() {
                 items={suggestion.userAllocation}
                 accentClass="bg-gs-navy"
                 investment={investment}
+                dark={dark}
               />
               <AllocationSection
                 title="AI Recommended Portfolio"
@@ -272,23 +299,26 @@ export default function Portfolio() {
                 items={suggestion.gptRecommendation}
                 accentClass="bg-gs-gold"
                 investment={investment}
+                dark={dark}
               />
               {suggestion.recommendationReasoning && (
-                <div className="bg-gs-white rounded-xl border border-gs-border p-5">
-                  <p className="text-xs text-gs-medium-gray uppercase tracking-wider mb-2">Why this recommendation?</p>
-                  <p className="text-sm text-gs-text leading-relaxed">{suggestion.recommendationReasoning}</p>
+                <div className={`rounded-xl border p-5 ${cardBg}`}>
+                  <p className={`text-xs uppercase tracking-wider mb-2 ${dark ? "text-[#5a7a96]" : "text-gs-medium-gray"}`}>Why this recommendation?</p>
+                  <p className={`text-sm leading-relaxed ${dark ? "text-[#d4d8dd]" : "text-gs-text"}`}>{suggestion.recommendationReasoning}</p>
                 </div>
               )}
             </div>
-          ) : suggestion ? (
-            <div className="bg-gs-white rounded-xl border border-gs-border p-6">
-              <pre className="whitespace-pre-wrap break-words text-sm text-gs-text m-0 leading-7 font-sans">{suggestion}</pre>
+          ) : !loading && suggestion ? (
+            <div className={`rounded-xl border p-6 ${cardBg}`}>
+              <pre className={`whitespace-pre-wrap break-words text-sm m-0 leading-7 font-sans ${dark ? "text-[#d4d8dd]" : "text-gs-text"}`}>{suggestion}</pre>
             </div>
-          ) : (
-            <div className="bg-gs-white rounded-xl border border-dashed border-gs-border p-8 text-sm text-gs-medium-gray leading-7 text-center">
+          ) : !loading ? (
+            <div className={`rounded-xl border border-dashed p-8 text-sm leading-7 text-center ${
+              dark ? "border-[#2a3a4e] text-[#4a6a86]" : "border-gs-border text-gs-medium-gray"
+            }`}>
               Generate a portfolio suggestion to see the recommended allocation and rationale here.
             </div>
-          )}
+          ) : null}
         </section>
       </div>
     </main>
