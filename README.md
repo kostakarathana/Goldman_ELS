@@ -50,10 +50,27 @@ r = riskFreeRate + beta × (expectedReturn − riskFreeRate)
 futureValue = principal × (1 + r)^years
 ```
 
+## Database support (Supabase)
+
+The backend now uses Supabase `securities` table instead of `data/funds.json`.
+
+Required environment variables (add in `server/.env`):
+
+- `SUPABASE_URL` (your Supabase project URL)
+- `SUPABASE_KEY` (service role or anon key, ideally service-role key for server-side)
+
+Then run:
+
+```bash
+cd server
+npm install
+npm start
+```
+
 ## API Endpoints
 
-### GET `/mutual-funds`
-Returns hardcoded list of mutual funds.
+### GET `/api/funds`
+Returns active securities mapped into fund format.
 
 **Response:**
 ```json
