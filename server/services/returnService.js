@@ -5,7 +5,7 @@ export async function getExpectedReturn(ticker) {
   const now = Math.floor(Date.now() / 1000);
 
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?period1=${oneYearAgo}&period2=${now}&interval=1mo`;
-  const response = await axios.get(url, { headers: { "User-Agent": "Mozilla/5.0" }, timeout: 8000 });
+  const response = await axios.get(url, { headers: { "User-Agent": "Mozilla/5.0" }, timeout: 15000 });
 
   const closes = response.data.chart.result[0].indicators.quote[0].close.filter(Boolean);
   return (closes.at(-1) - closes[0]) / closes[0];

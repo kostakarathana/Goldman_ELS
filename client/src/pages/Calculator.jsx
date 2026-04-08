@@ -43,10 +43,10 @@ export default function Calculator() {
     <main className="max-w-7xl mx-auto px-8 py-10">
       {/* Hero section */}
       <div className="text-center mb-10">
-        <h1 className={`text-3xl mb-3 ${dark ? "text-[#7fb3e0]" : ""}`}>Mutual Fund Investment Calculator</h1>
+        <h1 className={`text-3xl mb-3 ${dark ? "text-[#7fb3e0]" : ""}`}>Fund Investment Calculator</h1>
         <p className={`text-base max-w-xl mx-auto leading-relaxed ${dark ? "text-[#6a8aaa]" : "text-gs-dark-gray"}`}>
           See how much your investment could grow over time using the Capital
-          Asset Pricing Model. Select a mutual fund, enter your investment
+          Asset Pricing Model. Select a fund, enter your investment
           details, and calculate.
         </p>
       </div>

@@ -1,26 +1,19 @@
 import { useState, useEffect, useContext } from "react";
 import toast from "react-hot-toast";
-import { getFunds, compareFunds } from "../services/api";
+import { compareFunds } from "../services/api";
 import InvestmentForm from "../components/InvestmentForm";
-import FundTooltip from "../components/FundTooltip";
+import MultiFundSelector from "../components/MultiFundSelector";
 import { CompareSkeleton } from "../components/Skeleton";
 import { ThemeContext } from "../App";
 
 export default function Compare() {
   const { dark } = useContext(ThemeContext);
-  const [funds, setFunds] = useState([]);
   const [selectedTickers, setSelectedTickers] = useState([]);
   const [investment, setInvestment] = useState("");
   const [duration, setDuration] = useState("365");
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    getFunds()
-      .then(setFunds)
-      .catch(() => setFunds([]));
-  }, []);
 
   const toggleTicker = (symbol) => {
     setSelectedTickers((prev) =>
@@ -75,38 +68,11 @@ export default function Compare() {
       <div className="flex gap-10 items-start">
         {/* Left card */}
         <div className={`self-start rounded-xl border p-8 shadow-sm shrink-0 w-5/12 transition-colors duration-300 ${cardBg}`}>
-          <div className="mb-6">
-            <div className="flex items-baseline justify-between mb-2">
-              <label className={`block text-sm ${dark ? "text-[#6a8aaa]" : "text-gs-dark-gray"}`}>Select Funds <span className={dark ? "text-[#4a6a86]" : "text-gs-medium-gray"}>(2 or more)</span></label>
-              <span className={`text-xs ${dark ? "text-[#4a6a86]" : "text-gs-medium-gray"}`}>{selectedTickers.length} selected</span>
-            </div>
-            <div className={`border rounded-lg overflow-y-auto max-h-48 ${dark ? "border-[#2a3a4e]" : "border-gs-border"}`}>
-              {funds.map((fund) => {
-                const checked = selectedTickers.includes(fund.symbol);
-                return (
-                  <label
-                    key={fund.symbol}
-                    className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors text-sm border-b last:border-b-0 ${
-                      dark
-                        ? `border-[#1e3050] ${checked ? "bg-[#1a2a3e]" : "hover:bg-[#111d30]"}`
-                        : `border-gs-light-gray ${checked ? "bg-gs-navy/5" : "hover:bg-gs-light-gray"}`
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => toggleTicker(fund.symbol)}
-                      className="accent-gs-navy w-4 h-4 shrink-0"
-                    />
-                    <FundTooltip ticker={fund.symbol} dark={dark}>
-                      <span className={`font-mono text-xs w-12 shrink-0 ${dark ? "text-[#4A90D9]" : "text-gs-navy"}`}>{fund.symbol}</span>
-                    </FundTooltip>
-                    <span className={`truncate ${dark ? "text-[#8aa8c4]" : "text-gs-dark-gray"}`}>{fund.fund_name}</span>
-                  </label>
-                );
-              })}
-            </div>
-          </div>
+          <MultiFundSelector 
+            selectedTickers={selectedTickers}
+            onToggleTicker={toggleTicker}
+            label="Select Funds (2 or more)"
+          />
 
           <InvestmentForm
             investment={investment}

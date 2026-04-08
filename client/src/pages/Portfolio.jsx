@@ -1,7 +1,8 @@
 import { useEffect, useState, useContext } from "react";
 import toast from "react-hot-toast";
-import { getFunds, getPortfolioSuggestion } from "../services/api";
+import { getPortfolioSuggestion } from "../services/api";
 import { ThemeContext } from "../App";
+import MultiFundSelector from "../components/MultiFundSelector";
 
 function formatYears(years) {
   return `${years} ${years === 1 ? "Year" : "Years"}`;
@@ -73,7 +74,6 @@ function AllocationSection({ title, subtitle, items, accentClass, investment, da
 
 export default function Portfolio() {
   const { dark } = useContext(ThemeContext);
-  const [funds, setFunds] = useState([]);
   const [selectedTickers, setSelectedTickers] = useState([]);
   const [investment, setInvestment] = useState("");
   const [duration, setDuration] = useState(5);
@@ -81,12 +81,6 @@ export default function Portfolio() {
   const [suggestion, setSuggestion] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    getFunds()
-      .then((data) => setFunds(data))
-      .catch(() => setError("Unable to load the available mutual funds."));
-  }, []);
 
   const toggleTicker = (ticker) => {
     setSelectedTickers((current) =>
@@ -149,40 +143,11 @@ export default function Portfolio() {
           onSubmit={handleSubmit}
           className={`self-start rounded-xl border p-8 shadow-sm shrink-0 w-5/12 transition-colors duration-300 ${cardBg}`}
         >
-          <div className="mb-6">
-            <div className="flex items-baseline justify-between mb-2">
-              <label className={`block text-sm ${dark ? "text-[#6a8aaa]" : "text-gs-dark-gray"}`}>
-                Mutual Funds
-              </label>
-              <span className={`text-xs ${dark ? "text-[#4a6a86]" : "text-gs-medium-gray"}`}>
-                {selectedTickers.length} selected
-              </span>
-            </div>
-            <div className={`border rounded-lg max-h-72 overflow-y-auto ${dark ? "border-[#2a3a4e]" : "border-gs-border"}`}>
-              {funds.map((fund) => (
-                <label
-                  key={fund.symbol}
-                  className={`flex items-start gap-3 px-4 py-3 border-b last:border-b-0 cursor-pointer ${
-                    dark
-                      ? `border-[#1e3050] hover:bg-[#111d30] ${selectedTickers.includes(fund.symbol) ? "bg-[#1a2a3e]" : ""}`
-                      : `border-gs-light-gray hover:bg-gs-bg ${selectedTickers.includes(fund.symbol) ? "bg-gs-navy/5" : ""}`
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedTickers.includes(fund.symbol)}
-                    onChange={() => toggleTicker(fund.symbol)}
-                    className="mt-1 h-4 w-4 accent-gs-navy"
-                  />
-                  <span className={`text-sm leading-relaxed ${dark ? "text-[#d4d8dd]" : "text-gs-text"}`}>
-                    <span className="font-semibold">{fund.symbol}</span>
-                    {" - "}
-                    {fund.fund_name}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </div>
+          <MultiFundSelector 
+            selectedTickers={selectedTickers}
+            onToggleTicker={toggleTicker}
+            label="Select Mutual Funds"
+          />
 
           <div className="space-y-6 mb-6">
             <div>

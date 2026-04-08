@@ -1,36 +1,40 @@
 import OpenAI from "openai";
-import fs from "fs";
-import { fileURLToPath } from "url";
-import path from "path";
+import { getAllFunds } from "./fundService.js";
+import { getBeta } from "./betaService.js";
+import { getExpectedReturn } from "./returnService.js";
+import { computeRate } from "./calculatorService.js";
 
-const fundsData = JSON.parse(
-  fs.readFileSync(
-    path.join(path.dirname(fileURLToPath(import.meta.url)), "../data/funds.json")
-  )
-);
-const allFunds = fundsData.top_25_mutual_funds
-  .map((f) => `${f.symbol} (${f.fund_name})`)
-  .join(", ");
-
-// Hardcoded CAPM rates for the 25 known funds — used by the portfolio calculator.
-// The main calculator fetches live rates from Newton Analytics instead.
-export const FUND_RATE_HINTS = {
-  VSMPX: 12.3, FXAIX: 12.9, VFIAX: 12.2, VTSAX: 12.3, VIIIX: 12.2, FCTDX: 12.3,
-  AGTHX: 14.0, FCNTX: 13.5,
-  VGTSX: 2.1,
-  VTBNX: 4.7, VTBIX: 4.7, PIMIX: 6.0,
-  SPAXX: 5.0, VMFXX: 5.0, SWVXX: 5.0, FDRXX: 5.0, FGTXX: 5.0,
-  OGVXX: 5.0, FRGXX: 5.0, MVRXX: 5.0, TFDXX: 5.0, GVMXX: 5.0,
-  CJTTX: 5.0, TTTXX: 5.0, SNAXX: 5.0,
-};
+const RISK_FREE_RATE = 0.0425;
 
 export async function getPortfolioSuggestion(tickers, riskTolerance, duration, investment) {
   if (!process.env.OPENAI_API_KEY) {
     return getMockSuggestion(tickers, riskTolerance, duration, investment);
   }
 
-  const userFundsSummary = tickers
-    .map((t) => `${t} (approx. annual return: ${FUND_RATE_HINTS[t] != null ? FUND_RATE_HINTS[t] + "%" : "unknown"})`)
+  // Fetch all available funds from the database
+  const allFundsData = await getAllFunds();
+  const allFunds = allFundsData
+    .map((f) => `${f.ticker} (${f.name})`)
+    .join(", ");
+
+  const selectedRates = await Promise.all(
+    tickers.map(async (ticker) => {
+      try {
+        const beta = await getBeta(ticker);
+        const expectedReturn = await getExpectedReturn(ticker);
+        const rate = computeRate(beta, expectedReturn, RISK_FREE_RATE);
+        return { ticker: ticker.toUpperCase(), rate: rate * 100 };
+      } catch (err) {
+        return { ticker: ticker.toUpperCase(), rate: null };
+      }
+    })
+  );
+
+  const userFundsSummary = selectedRates
+    .map(({ ticker, rate }) => {
+      const formattedRate = rate != null ? `${rate.toFixed(1)}%` : "unknown";
+      return `${ticker} (approx. annual return: ${formattedRate})`;
+    })
     .join(", ");
 
   const riskLabel = riskTolerance <= 3 ? "conservative" : riskTolerance <= 6 ? "moderate" : "aggressive";
