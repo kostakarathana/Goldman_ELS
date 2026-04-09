@@ -1,7 +1,6 @@
 import fs from "fs";
 import { fileURLToPath } from "url";
 import path from "path";
-import { supabase } from "../supabaseClient.js";
 
 const fundsJson = JSON.parse(
   fs.readFileSync(
@@ -9,39 +8,56 @@ const fundsJson = JSON.parse(
   )
 );
 
-const localFunds = fundsJson.top_25_mutual_funds.map((f) => ({
-  ticker: f.symbol,
-  name: f.fund_name,
+function inferCompany(name) {
+  const providers = [
+    "Vanguard",
+    "Fidelity",
+    "Schwab",
+    "Goldman Sachs",
+    "JPMorgan",
+    "BlackRock",
+    "State Street",
+    "Morgan Stanley",
+    "American Funds",
+    "PIMCO",
+    "T. Rowe Price",
+    "ClearBridge",
+  ];
+
+  return providers.find((provider) => name.startsWith(provider)) || "Fund Sponsor";
+}
+
+function inferCategory(name) {
+  if (/Money Market|Cash Reserves|FedFund|Treasury/i.test(name)) {
+    return "Money Market";
+  }
+  if (/Bond|Income/i.test(name)) {
+    return "Bond";
+  }
+  if (/International/i.test(name)) {
+    return "International Equity";
+  }
+  if (/Growth|500|Index|Total Stock|Contrafund/i.test(name)) {
+    return "US Equity";
+  }
+
+  return "Diversified";
+}
+
+// Demo branch: always serve the curated local list for a stable recording flow.
+const localFunds = fundsJson.top_25_mutual_funds.map((fund) => ({
+  ticker: fund.symbol,
+  name: fund.fund_name,
   fund_type: "mutual_fund",
-  category: null,
-  company: null,
+  category: inferCategory(fund.fund_name),
+  company: inferCompany(fund.fund_name),
   is_active: true,
 }));
 
 export async function getAllFunds() {
-  if (!supabase) return localFunds;
-
-  const { data, error } = await supabase
-    .from("securities")
-    .select("ticker, name, fund_type, category, company")
-    .eq("is_active", true)
-    .order("ticker", { ascending: true });
-
-  if (error || !data?.length) return localFunds;
-  return data;
+  return localFunds;
 }
 
 export async function getFundByTicker(ticker) {
-  if (!supabase) {
-    return localFunds.find((f) => f.ticker === ticker.toUpperCase()) || null;
-  }
-
-  const { data, error } = await supabase
-    .from("securities")
-    .select("id, ticker, name, fund_type, category, company, is_active")
-    .eq("ticker", ticker.toUpperCase())
-    .single();
-
-  if (error) return localFunds.find((f) => f.ticker === ticker.toUpperCase()) || null;
-  return data || null;
+  return localFunds.find((fund) => fund.ticker === ticker.toUpperCase()) || null;
 }

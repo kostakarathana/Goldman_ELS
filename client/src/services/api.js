@@ -1,15 +1,29 @@
+import { FALLBACK_FUNDS, getFallbackFundByTicker } from "../data/mockData";
+
 const BASE_URL = "/api";
 
 export async function getFunds() {
-  const res = await fetch(`${BASE_URL}/funds`);
-  if (!res.ok) throw new Error("Failed to fetch funds");
-  return res.json();
+  try {
+    const res = await fetch(`${BASE_URL}/funds`);
+    if (!res.ok) throw new Error("Failed to fetch funds");
+
+    const data = await res.json();
+    return Array.isArray(data) && data.length > 0 ? data : FALLBACK_FUNDS;
+  } catch {
+    return FALLBACK_FUNDS;
+  }
 }
 
-export async function getFundByTicker(ticker){
-  const res = await fetch(`${BASE_URL}/funds/${ticker}`);
-  if (!res.ok) throw new Error("Failed to fetch fund");
-  return res.json();
+export async function getFundByTicker(ticker) {
+  try {
+    const res = await fetch(`${BASE_URL}/funds/${ticker}`);
+    if (!res.ok) throw new Error("Failed to fetch fund");
+    return res.json();
+  } catch {
+    const fallbackFund = getFallbackFundByTicker(ticker);
+    if (fallbackFund) return fallbackFund;
+    throw new Error("Failed to fetch fund");
+  }
 }
 
 export async function getFutureValue(ticker, investment, duration) {
