@@ -3,6 +3,7 @@ import { computeRate, computeFutureValue } from "../services/calculatorService.j
 import { getBeta } from "../services/betaService.js";
 import { getExpectedReturn } from "../services/returnService.js";
 import { getFundByTicker } from "../services/fundService.js";
+import { getOrSetAnonSessionId, insertCalculationHistory } from "../models/Investment.js";
 
 const router = express.Router();
 
@@ -16,6 +17,7 @@ router.get("/future-value", async (req, res) => {
   }
 
   try {
+    const sessionId = getOrSetAnonSessionId(req, res);
     const years = Number(duration) / 365;
     const beta = await getBeta(ticker);
     const expectedReturn = await getExpectedReturn(ticker);
@@ -25,6 +27,19 @@ router.get("/future-value", async (req, res) => {
     const fund = await getFundByTicker(ticker);
     const fundName = fund ? fund.name : ticker;
 
+    // Persist calculation history for this anonymous session (best-effort).
+    try {
+      await insertCalculationHistory(sessionId, {
+        fund_ticker: ticker,
+        fund_name: fundName,
+        principal: Number(investment),
+        duration_days: Number(duration),
+        future_value: futureValue,
+      });
+    } catch (persistErr) {
+      console.error("history insert failed", persistErr);
+    }
+
     res.json({
       futureValue,
       rate,
@@ -32,6 +47,7 @@ router.get("/future-value", async (req, res) => {
       expectedReturn,
       riskFreeRate: RISK_FREE_RATE,
       fundName,
+      sessionId,
     });
   } catch (err) {
     console.error("/future-value error", err);
