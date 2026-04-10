@@ -5,6 +5,7 @@ import fundsRouter from "./routes/funds.js";
 import calculateRouter from "./routes/calculate.js";
 import compareRouter from "./routes/compare.js";
 import portfolioRouter from "./routes/portfolio.js";
+import historyRouter from "./routes/history.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,6 +17,7 @@ app.use("/api/funds", fundsRouter);
 app.use("/api", calculateRouter);
 app.use("/api/compare", compareRouter);
 app.use("/api/portfolio", portfolioRouter);
+app.use("/api", historyRouter);
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {

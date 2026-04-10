@@ -1,10 +1,13 @@
 import { createClient } from "@supabase/supabase-js";
 import { config } from "dotenv";
 import path from "path";
+import { fileURLToPath } from "url";
 
-// Only try to load .env.local if we are NOT on Vercel
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 if (!process.env.VERCEL) {
-  config({ path: path.resolve(process.cwd(), ".env.local") });
+  config({ path: path.resolve(__dirname, ".env.local") });
 }
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;

@@ -14,8 +14,19 @@ export async function getFundByTicker(ticker){
 
 export async function getFutureValue(ticker, investment, duration) {
   const params = new URLSearchParams({ ticker, investment, duration });
-  const res = await fetch(`${BASE_URL}/future-value?${params}`);
+  const res = await fetch(`${BASE_URL}/future-value?${params}`, {
+    // ensure cookies (anon_session_id) are stored/sent consistently
+    credentials: "include",
+  });
   if (!res.ok) throw new Error("Calculation failed");
+  return res.json();
+}
+
+export async function getCalculationHistory() {
+  const res = await fetch(`${BASE_URL}/history`, {
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Failed to fetch history");
   return res.json();
 }
 

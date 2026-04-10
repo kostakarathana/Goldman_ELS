@@ -93,6 +93,6 @@ AI portfolio optimization. Body: `tickers[]`, `riskTolerance`, `duration`, `inve
 - Multi-fund comparison
 - Historical performance charts (Recharts)
 - AI portfolio optimization (OpenAI)
-- Database persistence (SQLite/PostgreSQL)
+- Database persistence (PostgreSQL)
 - Unit tests (Jest)
 - ETF support

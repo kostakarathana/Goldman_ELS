@@ -1,10 +1,11 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import FundSelector from "../components/FundSelector";
 import InvestmentForm from "../components/InvestmentForm";
 import ResultsDisplay from "../components/ResultsDisplay";
 import { ResultsSkeleton } from "../components/Skeleton";
-import { getFutureValue } from "../services/api";
+import CalculationHistory from "../components/CalculationHistory";
+import { getCalculationHistory, getFutureValue } from "../services/api";
 import { ThemeContext } from "../App";
 
 export default function Calculator() {
@@ -15,11 +16,30 @@ export default function Calculator() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   // snapshot of inputs at the moment calculate results button was last clicked
   const [snapshot, setSnapshot] = useState(null);
 
   const canCalculate = ticker && investment && duration;
+
+  const refreshHistory = async () => {
+    setHistoryLoading(true);
+    try {
+      const data = await getCalculationHistory();
+      setHistory(Array.isArray(data.history) ? data.history : []);
+    } catch {
+      // history is a nice-to-have; keep UI usable even if it fails
+      setHistory([]);
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshHistory();
+  }, []);
 
   const handleCalculate = async () => {
     const requestSnapshot = { ticker, investment, duration };
@@ -31,6 +51,7 @@ export default function Calculator() {
       setSnapshot(requestSnapshot);
       setResult(data);
       toast.success(`Projected value: ${Number(data.futureValue).toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}`);
+      await refreshHistory();
     } catch (err) {
       setError("Calculation failed. Please try again.");
       toast.error("Calculation failed");
@@ -80,6 +101,7 @@ export default function Calculator() {
           >
             {loading ? "Calculating..." : "Calculate Future Value"}
           </button>
+          <CalculationHistory items={history} loading={historyLoading} />
         </div>
 
         {/* Results */}
