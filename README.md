@@ -1,4 +1,4 @@
-# Mutual Fund Calculator
+# Mutual Fund Calculator for Goldman Sachs Emerging Leaders Series (ACHIEVED RUNNER UP FROM 20+ GROUPS)
 
 ## Tech Stack
 
